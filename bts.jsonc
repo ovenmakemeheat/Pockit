@@ -1,0 +1,28 @@
+// Better-T-Stack project metadata
+//
+// Keep this file to use the `add` command.
+// Add addons: bunx create-better-t-stack@latest add
+//
+// Docs: https://better-t-stack.dev/docs
+// Stack Builder: https://better-t-stack.dev/new
+
+{
+  "$schema": "https://r2.better-t-stack.dev/schema.json",
+  "version": "3.49.0",
+  "createdAt": "2026-11-03T15:24:16.530Z",
+  "reproducibleCommand": "bun create better-t-stack@latest Pockit --frontend tanstack-start --backend elysia --runtime bun --database postgres --orm prisma --api trpc --auth better-auth --payments none --addons biome husky lefthook mcp skills turborepo --examples none --db-setup none --web-deploy docker --server-deploy docker --git --package-manager bun --install",
+  "database": "postgres",
+  "orm": "prisma",
+  "backend": "elysia",
+  "runtime": "bun",
+  "frontend": ["tanstack-start"],
+  "addons": ["biome", "husky", "lefthook", "mcp", "skills", "turborepo"],
+  "examples": [],
+  "auth": "better-auth",
+  "payments": "none",
+  "packageManager": "bun",
+  "dbSetup": "none",
+  "api": "trpc",
+  "webDeploy": "docker",
+  "serverDeploy": "docker",
+}

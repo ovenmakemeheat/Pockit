@@ -1,0 +1,3 @@
+{
+  "extends": "@Pockit/config/tsconfig.base.json"
+}
