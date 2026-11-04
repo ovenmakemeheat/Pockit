@@ -16,10 +16,10 @@ assignees: ""
 <!-- Summarize the work included in this sprint. Keep implementation details in child issues. -->
 
 ## Branch plan
-<!-- Describe the sprint integration strategy; it is fine to use main directly. -->
-- Sprint integration branch (if used):
-- Work-item PR target:
-- Final integration target:
+<!-- Create feature/fix branches from the current sprint staging branch. Merge work-item PRs into sprint staging, then use a separately reviewed release PR to main. -->
+- **Required sprint staging branch:**
+- Work-item PR target (sprint staging branch):
+- Final integration target (separately reviewed release PR to `main`):
 
 ## Sprint-specific acceptance criteria
 <!-- Add observable outcomes specific to this sprint. -->
