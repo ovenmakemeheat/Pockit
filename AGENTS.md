@@ -55,6 +55,8 @@ Maintain the project artifacts required by the brief: a concise SRS with stable 
 
 Before implementing each feature, prepare its bounded contract: Feature-Level SDS, applicable UI/API/data specifications, acceptance criteria with stable IDs, a Software Test Specification, dependencies, Definition of Done, and required evidence. Link each acceptance criterion to planned and actual tests. Include negative and boundary cases. For meaningful business-rule, defect, and change work, use TDD: demonstrate the intended test failing before implementing the behavior, then run it and the relevant regressions. Do not weaken a test to make incorrect behavior pass. Record actual commands, results, and tested commits; screenshots and agent statements alone are not test evidence.
 
+**Pre-sprint setup exception:** Project Setup Issue #9 is repository/bootstrap work, not a Sprint 1 product feature, and does not require a formal Software Test Specification. Record actual setup/test commands, outcomes, and acceptance evidence in the issue and pull request.
+
 For Project Deliverable 1, maintain evidence for a runnable release on `main`, its tag/commit, reproducible setup instructions, test commands/results, and a short reproducible demo sequence.
 
 ### Team participation and attribution
@@ -72,13 +74,13 @@ Both students must participate in requirements/design, testing, AI-agent supervi
 
 Use GitHub Issues and a project board. Link each Issue to the relevant requirement/feature and engineering contract; use native sub-issues for bounded work. Follow the course flow:
 
-1. Create a feature/fix branch from the current sprint staging branch.
+1. Create a feature/fix branch from the current sprint staging branch. Pre-sprint Project Setup Issue #9 is the exception: its issue branch starts from `main`.
 2. Implement the bounded Issue, run tests, inspect the diff, and update documents.
-3. Open a PR into sprint staging and obtain teammate review before merging. The review must state a specific check, question, finding, or reason for approval; authors do not approve their own PRs.
+3. Open a PR into sprint staging and obtain teammate review before merging. The review must state a specific check, question, finding, or reason for approval; authors do not approve their own PRs. Pre-sprint Project Setup Issue #9 instead targets `main`, and still requires teammate review; it must not be self-merged.
 4. Integrate accepted work and run sprint integration/system tests and acceptance checks.
 5. Open a separately reviewed release PR from sprint staging to `main`; record/tag the accepted release.
 
-Create exactly one work branch per Issue from its current sprint staging branch. Keep implementation, review fixes, and explicitly requested additional changes on that same issue branch and its active PR; do not create extra branches for subtasks or incremental changes. If a PR for an issue has already merged while its acceptance criteria remain open, continue on the same issue branch and open a follow-up PR from it rather than creating another branch. An unrelated change explicitly requested by the user may ride on the active issue branch/PR, but do not silently expand scope or mark unrelated criteria complete.
+Create exactly one work branch per Issue from its current sprint staging branch. Keep implementation, review fixes, and explicitly requested additional changes on that same issue branch and its active PR; do not create extra branches for subtasks or incremental changes. Project Setup Issue #9 is pre-sprint repository work: it is not assigned to Sprint 1, its PR targets `main`, and `staging-1` is aligned with `main` as the clean Sprint 1 baseline. If a PR for an issue has already merged while its acceptance criteria remain open, continue on the same issue branch and open a follow-up PR from it rather than creating another branch. An unrelated change explicitly requested by the user may ride on the active issue branch/PR, but do not silently expand scope or mark unrelated criteria complete.
 
 Record the intended branch and PR target in Issues. Do not merge a partial sub-issue PR as if it completed its parent. Preserve approved contract revisions and implementation history; surface scope changes and blockers rather than silently rewriting them.
 
