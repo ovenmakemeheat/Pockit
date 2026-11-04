@@ -105,7 +105,14 @@ Useful root commands currently defined:
 - `bun run db:migrate` — create/apply versioned development migrations; preserve migrations for reviewed schema changes. `db:push` is not a substitute for a versioned migration when one is required.
 - `bun run env:generate` — regenerate Varlock environment accessors after schema changes.
 
-There is not yet a root test command in `package.json`; establish and document the appropriate test setup/commands as part of project foundation work rather than claiming tests ran. `bun run check` currently runs `biome check --write .` and may modify files; inspect its effects before accepting or reverting changes. Keep secrets in ignored local environment files and update `.env.schema` / examples without committing secret values.
+- `bun run test` — generate Prisma Client and run the web, server, API, and PostgreSQL-backed suites. Start the disposable local database and apply migrations first; the database suite must fail rather than silently skip if PostgreSQL is unavailable.
+- `bun run db:dev:up` / `bun run db:dev:down` — start or stop the local PostgreSQL Compose service. Do not stop unrelated database services or reset an unknown database.
+- `bun run db:migrate:deploy` — apply checked-in migrations non-interactively; use `bun run db:migrate` for local development in a terminal.
+- `bun run check` is read-only (`biome check .`). `bun run format` applies formatting and may modify files; inspect its diff before accepting changes. Keep secrets in ignored local environment files and update `.env.schema` / examples without committing secret values.
+
+### User-run development servers
+
+Do not launch or background application development servers for the user, including `bun run dev`, `bun run dev:web`, or `bun run dev:server`. Give the user the command and let them start it. Stop a development server only when the user explicitly asks. This restriction does not prohibit starting the documented local PostgreSQL service for verification; never stop an unrelated service.
 
 ## Agent skills
 
