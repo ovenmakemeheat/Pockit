@@ -33,7 +33,7 @@ The repository needs a clean, repeatable path to configure, start, and verify th
 
 ## Design and interaction decisions
 
-1. **Pre-sprint and branch workflow:** Issue #9 is repository/bootstrap work outside Sprint 1. Keep all work and review fixes on the single `feature/project-setup` issue branch, based on `main`; PR #11 targets `main`. PR #10 remains historically merged to `staging-1`; PR #11 carries those repository-guidance/template changes together with the setup work so they can be reviewed for `main`. Require specific teammate review; do not self-merge. Squash merging after review keeps the resulting `main` history consolidated.
+1. **Pre-sprint and branch workflow:** Issue #9 is repository/bootstrap work outside Sprint 1. Keep all work and follow-up fixes on the single `feature/project-setup` issue branch, based on `main`; PR #11 targets `main`. PR #10 remains historically merged to `staging-1`; PR #11 carries those repository-guidance/template changes together with the setup work into `main`. This user-authorized direct-to-main implementation PR does not require teammate review. Squash merging after acceptance keeps the resulting `main` history consolidated; the separate staging-to-main release PR must still receive teammate review.
 2. **Workspace testing:** Use Bun's built-in test runner and Turbo package tasks. Avoid another test framework unless Bun proves insufficient for required external behavior.
 3. **Test seams:** Test the web at a rendered shared UI component; test API procedures with tRPC callers and controlled contexts; test the Elysia HTTP app through `app.handle()` without opening a listener; test the database with an actual PostgreSQL connection against the disposable local service.
 4. **Server composition:** Separate server app construction from the listen side effect. The runtime entry point composes real services and listens; tests invoke the app without opening a port or initializing production integrations.
@@ -58,4 +58,4 @@ The repository needs a clean, repeatable path to configure, start, and verify th
 - Relevant build, type, lint/format, and test outcomes are recorded against exact commits, including failures and limitations.
 - Clean-checkout setup is verified or remaining user/teammate checks are kept explicit and open.
 - Acceptance checks and project-board fields match verified evidence.
-- A teammate provides a specific review before PR #11 is merged into `main`; no self-merge.
+- PR #11's acceptance criteria are verified before it is squash-merged into `main`; no teammate review is required for this direct-to-main implementation PR. The later staging-to-main release PR still requires a specific teammate review.
