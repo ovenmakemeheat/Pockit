@@ -57,7 +57,16 @@ Before implementing each feature, prepare its bounded contract: Feature-Level SD
 
 For Project Deliverable 1, maintain evidence for a runnable release on `main`, its tag/commit, reproducible setup instructions, test commands/results, and a short reproducible demo sequence.
 
-Both students must participate in requirements/design, testing, agent supervision, implementation, review, deployment, and maintenance. Use Issues, commits, PR authorship/review, and a short contribution record to make participation and decisions traceable. Both students should be able to explain sampled requirements, tests, and design decisions.
+### Team participation and attribution
+
+This is a two-student project:
+
+| GitHub profile | Student | Student number |
+| --- | --- | --- |
+| [Polwarit Watthanahemmarat](https://github.com/MadMax168) | Polwarit Watthanahemmarat | 67070501067 |
+| [Guntee Doungmanee](https://github.com/ovenmakemeheat) | Guntee Doungmanee | 67070501003 |
+
+Both students must participate in requirements/design, testing, AI-agent supervision, implementation, review, deployment, and maintenance. Work may be split by issue or feature, but not into permanent roles such as “one writes docs, one codes.” Show participation and decisions through Issues, commits, PR authorship/reviews, and a short contribution table in delivery documentation. Pair work may name both students; equal commit counts are not required. Both students must be able to explain sampled requirements, tests, design decisions, and release steps.
 
 ## Git and delivery workflow
 
@@ -65,11 +74,21 @@ Use GitHub Issues and a project board. Link each Issue to the relevant requireme
 
 1. Create a feature/fix branch from the current sprint staging branch.
 2. Implement the bounded Issue, run tests, inspect the diff, and update documents.
-3. Open a PR into sprint staging and obtain specific teammate review; authors do not approve their own PRs.
+3. Open a PR into sprint staging and obtain teammate review before merging. The review must state a specific check, question, finding, or reason for approval; authors do not approve their own PRs.
 4. Integrate accepted work and run sprint integration/system tests and acceptance checks.
 5. Open a separately reviewed release PR from sprint staging to `main`; record/tag the accepted release.
 
+Create exactly one work branch per Issue from its current sprint staging branch. Keep implementation, review fixes, and explicitly requested additional changes on that same issue branch and its active PR; do not create extra branches for subtasks or incremental changes. If a PR for an issue has already merged while its acceptance criteria remain open, continue on the same issue branch and open a follow-up PR from it rather than creating another branch. An unrelated change explicitly requested by the user may ride on the active issue branch/PR, but do not silently expand scope or mark unrelated criteria complete.
+
 Record the intended branch and PR target in Issues. Do not merge a partial sub-issue PR as if it completed its parent. Preserve approved contract revisions and implementation history; surface scope changes and blockers rather than silently rewriting them.
+
+### Issue and project-board hygiene
+
+Keep GitHub Issues, their acceptance checklists, and the [Pockit project board](https://github.com/users/ovenmakemeheat/projects/5) synchronized throughout every work item. Update them immediately at each lifecycle transition: issue creation or scope change, branch creation, PR opening, review request or feedback, fix push, merge, blocker/unblock, and issue completion or closure. Link the relevant PR and keep the branch, base, and PR target information current. Maintain the board's `Sprint`, `Estimate (points)`, and `Status` fields; do not invent estimates or sprint dates when they have not been agreed.
+
+Use the board's existing Status values to reflect actual progress: `Backlog` (not ready), `Specified` (bounded contract and acceptance criteria ready), `Started` (work underway), `PR Review` (PR awaiting teammate review), `Fixing` (review feedback being addressed), and `Done` (all issue acceptance criteria verified, work integrated, and issue complete). A merged partial PR does not make its issue Done: leave remaining criteria unchecked and the issue open, with a status matching the remaining work.
+
+Manage issue checklists continuously. Check an acceptance criterion only after it is satisfied and supported by actual evidence; link stable criterion IDs to planned and actual tests where applicable, and record test commands, results, and tested commits. Keep unfinished criteria, blockers, and follow-ups visible; reopen a checked item if later evidence invalidates it. Before finishing an issue task, verify that the issue body, checklist, PR links, and project-board fields all match the current state.
 
 CI becomes mandatory in Lab 5. Before then, run and record local checks against the submitted commit. Design for Docker and GCP deployment from the start, but the group brief schedules Docker, CI/CD, and GCP deployment for Lab 5; do not claim cloud deployment is a Sprint 1 prerequisite.
 

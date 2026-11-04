@@ -1,16 +1,15 @@
 import type { Context as ApiContext } from "@Pockit/api/context";
-import type { Context as ElysiaContext } from "elysia";
-
-import { db } from "./services";
-import { auth } from "./services";
+import { auth, db } from "./services";
 
 export type CreateContextOptions = {
-  context: ElysiaContext;
+  request: Request;
 };
 
-export async function createContext({ context }: CreateContextOptions): Promise<ApiContext> {
+export async function createContext({
+  request,
+}: CreateContextOptions): Promise<ApiContext> {
   const session = await auth.api.getSession({
-    headers: context.request.headers,
+    headers: request.headers,
   });
   return {
     db,
