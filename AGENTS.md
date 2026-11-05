@@ -2,7 +2,7 @@
 
 ## Project identity and source of truth
 
-Pockit is the two-student CPE 334 group project for theme **7: Personal Money and Expense Logging System**. The current project brief is `docs/requirements/final/group_work_specs_v1.pdf`, section 6, theme 7. Follow any later instructor-issued or approved project documents if they refine this brief. Do not silently change scope or treat an assumption as an approved requirement; record open questions and decisions in the engineering documents.
+Pockit is the two-student CPE 334 group project for theme **7: Personal Money and Expense Logging System**. The current project brief is `docs/assignments/final/group_work_specs_v1.pdf`, section 6, theme 7. Follow any later instructor-issued or approved project documents if they refine this brief. Do not silently change scope or treat an assumption as an approved requirement; record open questions and decisions in the engineering documents.
 
 The project is a persistent, full-stack product—not a static UI, generic CRUD demo, or browser-only store. Plan the complete product across three sprints before Sprint 1 implementation, while elaborating each feature contract just before that feature is built.
 
