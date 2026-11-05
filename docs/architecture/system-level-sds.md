@@ -242,13 +242,13 @@ This is a planned Lab 5 deployment direction, not a claim of existing cloud reso
 These design rules satisfy the need for explicit money handling while preserving currency questions that the SRS has not approved:
 
 1. **Exact representation:** use PostgreSQL `NUMERIC` with Prisma `Decimal`, or an equivalently exact decimal representation. API and UI transport use decimal strings. JavaScript binary floating-point is prohibited for money.
-2. **Precision validation:** each currency has an explicitly configured supported scale. Reject an amount with more fractional digits than that scale; do not silently truncate or round it. The currency set and scale are still open (SRS OQ-01), so implementation cannot hard-code a currency scale until approved.
-3. **Rounding:** do not round posted Transaction, allocation, balance, transfer, or summary values. Exact arithmetic must preserve the amount. If a future derived calculation requires rounding, its mode and boundary must be specified and approved before implementation (SRS OQ-02); no implicit rounding is allowed.
+2. **Proposed precision validation (pending team/course confirmation):** each currency would have an explicitly configured supported scale. The proposed policy is to reject an amount with more fractional digits than that scale, rather than silently truncate or round it. The currency set and scale are still open (SRS OQ-01), so implementation cannot hard-code a currency scale until approved.
+3. **Proposed rounding policy (pending team/course confirmation):** do not implicitly round posted Transaction, allocation, balance, transfer, or summary values; exact arithmetic would preserve the amount. If a future derived calculation requires rounding, its mode and boundary must be specified and approved before implementation (SRS OQ-02).
 4. **Allocation equality:** compare exact decimal values, and require allocation sum = Transaction total before commit.
 5. **Balance calculation:** derive natural balances and category totals from opening positions plus committed postings as defined in Section 4.2. Opening balances, transfers, borrowing, and loan repayments are never classified as Income or Expense.
 6. **Currency compatibility:** currency code, supported currencies, mixed-currency behavior, and any foreign-exchange feature are not defined by the current SRS. Do not add currency conversion or silently combine unlike currencies; resolve the needed behavior before a feature requires it.
 
-The representation, no-implicit-rounding policy, and balance formulas are the System-Level design choices. Currency/scale values, display formatting, zero/negative/boundary constraints, and date/time-zone semantics remain feature-level decisions tied to SRS OQ-01, OQ-02, OQ-03, and OQ-07. These choices must be surfaced to the team before implementation if the course brief requires different behavior.
+Exact decimal representation and the balance formulas are the System-Level design choices. Rejecting excess precision and disallowing implicit rounding are proposed policies, not approved System-Level choices; both remain pending team/course confirmation while SRS OQ-02 is open. Currency/scale values, display formatting, zero/negative/boundary constraints, and date/time-zone semantics remain feature-level decisions tied to SRS OQ-01, OQ-02, OQ-03, and OQ-07.
 
 ## 10. Requirement-to-design traceability
 
@@ -296,7 +296,7 @@ This is a documentation deliverable. Application behavior is not certified by th
 | SRS question | Design implication / resolution point |
 | --- | --- |
 | OQ-01 — currency and precision | Approve supported currency codes and scale before schema validation, formatting, or persisted values depend on them. |
-| OQ-02 — rounding and excess precision | This SDS chooses no implicit rounding and rejection beyond configured scale; confirm the course/team accepts it in the applicable feature contract. Any derived-calculation rounding needs a separately approved rule. |
+| OQ-02 — rounding and excess precision | Proposed policies are no implicit rounding and rejection beyond configured scale, pending team/course confirmation; these are not approved System-Level choices. Any derived-calculation rounding needs a separately approved rule. |
 | OQ-03 — date/time zone and default Transaction date | Decide canonical Transaction-date storage, display timezone, default date, and summary period boundary in the transaction/reporting contracts. |
 | OQ-04 — correction and audit | Decide edit/delete/correction and historical audit behavior before implementing correction. |
 | OQ-05 — disabled-session revocation | Decide whether disablement invalidates existing sessions immediately and how checks/revocation are enforced. |
