@@ -3,7 +3,7 @@
 **Project:** Personal Money and Expense Logging System (CPE 334, Theme 7)<br>
 **Version:** 0.1 — Draft baseline for team review<br>
 **Issue:** [#3 — Sprint 1: SRS and product scope](https://github.com/ovenmakemeheat/Pockit/issues/3)<br>
-**Source of truth:** `docs/requirements/final/group_work_specs_v1.pdf`, section 6, item 7; plus the approved project constraints in `AGENTS.md`.
+**Source of truth:** `docs/requirements/final/group_work_specs_v1.pdf`, section 6, item 7; the approved project constraints in `AGENTS.md`; and the Sprint 1 acceptance scope in Issue #8.
 
 This SRS records the approved product scope and separates requirements from unresolved choices. Requirement identifiers are stable; do not renumber them when wording changes. Add new identifiers rather than reusing retired ones. Open questions below are not approved decisions and must be resolved in the relevant design/feature contract before implementation depends on them.
 
@@ -127,5 +127,5 @@ These checks validate the SRS content, not application behavior. Application tes
 | **SRS-AC-02 / SRS-VAL-02** | Functional, business, and important measurable non-functional requirements have stable identifiers. | Inspect FR/BR/NFR tables for unique, persistent identifiers and observable wording. |
 | **SRS-AC-03 / SRS-VAL-03** | Scope, exclusions, assumptions, and resolved constraints are explicit. | Review Sections 1 and 7 against the brief; confirm excluded features are not included as requirements. |
 | **SRS-AC-04 / SRS-VAL-04** | Account types and both transaction forms, allocation, and balance rules match the approved brief. | Cross-check BR-01 through BR-10 against Theme 7 text. |
-| **SRS-AC-05 / SRS-VAL-05** | Sprint 1 is distinguished from later approved scope. | Cross-check Section 6 against the Sprint 1 example and “Later sprints” paragraphs. |
+| **SRS-AC-05 / SRS-VAL-05** | Sprint 1 is distinguished from later approved scope. | Cross-check Section 6 against the Theme 7 Sprint 1 example and “Later sprints” paragraphs, plus the Sprint 1 acceptance scope in Issue #8. |
 | **SRS-AC-06 / SRS-VAL-06** | Unresolved questions are recorded instead of presented as settled decisions. | Review Section 8 and confirm unresolved decisions are not contradicted elsewhere. |
