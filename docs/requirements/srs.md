@@ -84,6 +84,7 @@ Seeded demo Users are sufficient for the project; public self-registration is no
 | **NFR-04 — Money precision** | Monetary storage and arithmetic must avoid binary floating-point error. Once OQ-01/OQ-02 are approved, tests must cover the smallest supported unit and rounding/precision boundaries. |
 | **NFR-05 — Secret and demo-data safety** | Repository examples and tests use synthetic data. Real credentials, secrets, and personal/financial data must not be committed. Verify tracked examples/configuration and review changed files for sensitive data. |
 | **NFR-06 — Verifiability** | Each implemented requirement must link to observable acceptance criteria and actual tests/evidence. Required authentication, authorization, persistence, and financial-invariant behavior must not be represented solely by UI mocks. |
+| **NFR-07 — Credential protection** | If the application manages passwords, it must persist only suitable password hashes and never plaintext passwords. Verify the authentication configuration and persisted credential representation without exposing secret values. |
 
 ## 6. Sprint allocation
 
