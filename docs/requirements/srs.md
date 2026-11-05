@@ -3,7 +3,7 @@
 **Project:** Personal Money and Expense Logging System (CPE 334, Theme 7)<br>
 **Version:** 0.1 — Draft baseline for team review<br>
 **Issue:** [#3 — Sprint 1: SRS and product scope](https://github.com/ovenmakemeheat/Pockit/issues/3)<br>
-**Source of truth:** `docs/requirements/final/group_work_specs_v1.pdf`, section 6, item 7; the approved project constraints in `AGENTS.md`; and the Sprint 1 acceptance scope in Issue #8.
+**Source of truth:** `docs/assignments/final/group_work_specs_v1.pdf`, section 6, item 7; the approved project constraints in `AGENTS.md`; and the Sprint 1 acceptance scope in Issue #8.
 
 This SRS records the approved product scope and separates requirements from unresolved choices. Requirement identifiers are stable; do not renumber them when wording changes. Add new identifiers rather than reusing retired ones. Open questions below are not approved decisions and must be resolved in the relevant design/feature contract before implementation depends on them.
 
