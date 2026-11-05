@@ -1,146 +1,117 @@
 # Pockit
 
-This project was created with [Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack), a modern TypeScript stack that combines React, TanStack Start, Elysia, TRPC, and more.
+Pockit is a Bun 1.3.14 TypeScript monorepo for a personal money and expense logging system. It uses React/TanStack Start, Elysia, tRPC, Better Auth, Prisma, PostgreSQL, Tailwind/shadcn UI, Biome, and Turborepo.
 
-## Features
+## Prerequisites
 
-- **TypeScript** - For type safety and improved developer experience
-- **TanStack Start** - SSR framework with TanStack Router
-- **TailwindCSS** - Utility-first CSS for rapid UI development
-- **Shared UI package** - shadcn/ui primitives live in `packages/ui`
-- **Elysia** - Type-safe, high-performance framework
-- **tRPC** - End-to-end type-safe APIs
-- **Bun** - Runtime environment
-- **Prisma** - TypeScript-first ORM
-- **PostgreSQL** - Database engine
-- **Authentication** - Better-Auth
-- **Biome** - Linting and formatting
-- **Husky** - Git hooks for code quality
-- **Turborepo** - Optimized monorepo build system
+- Bun **1.3.14** (`bun --version`)
+- Docker with Docker Compose for the local PostgreSQL service
+- Git
 
-## Getting Started
+## Clean-checkout setup
 
-First, install the dependencies:
+From the repository root:
 
-```bash
+```sh
 bun install
 ```
 
-## Database Setup
+Create local environment files from the committed examples. PowerShell:
 
-Generate the Prisma client before development, typechecking, or building, including in CI and deployment builds. Run this again after changing the Prisma schema:
+```powershell
+Copy-Item apps/server/.env.example apps/server/.env
+Copy-Item apps/web/.env.example apps/web/.env
+Copy-Item packages/db/.env.example packages/db/.env
+```
 
-```bash
+Bash:
+
+```sh
+cp apps/server/.env.example apps/server/.env
+cp apps/web/.env.example apps/web/.env
+cp packages/db/.env.example packages/db/.env
+```
+
+The `.env` files are local-only and ignored by Git. Replace `BETTER_AUTH_SECRET` in `apps/server/.env` with a random local value of at least 32 characters before using authentication. Keep the `DATABASE_URL` values in `apps/server/.env` and `packages/db/.env` aligned. Never commit real credentials, secrets, or personal/financial data.
+
+## Local PostgreSQL and Prisma
+
+Start the development-only PostgreSQL service:
+
+```sh
+bun run db:dev:up
+docker compose -f docker-compose.db.yml ps
+```
+
+The service binds to localhost port 5432, uses synthetic local credentials from the Compose file, and stores data in the `pockit-postgres-data` Docker volume. To use another port, set `POCKIT_POSTGRES_PORT` before starting it and update both local `DATABASE_URL` values. Stop the service without deleting its data with:
+
+```sh
+bun run db:dev:down
+```
+
+Generate the Prisma client and apply the checked-in, versioned migrations to the local database:
+
+```sh
 bun run db:generate
+bun run db:migrate
 ```
 
-This project uses PostgreSQL with Prisma.
+For each schema change, create and review a migration with `bun run db:migrate -- --name <descriptive_name>`, then commit the migration with the schema change. Use `bun run db:migrate:deploy` to apply committed migrations in a deployment environment. Do not use `db:push` as a substitute for versioned team migrations. Never reset or apply migrations to an unknown database.
 
-1. Make sure you have a PostgreSQL database set up.
-2. Update your `apps/server/.env` file with your PostgreSQL connection details.
+Prisma CLI commands run with Bun. After changing an environment schema, regenerate Varlock accessors with:
 
-3. Apply the schema to your database:
-
-```bash
-bun run db:push
+```sh
+bun run env:generate
 ```
 
-Then, run the development server:
+## Run the applications
 
-```bash
+```sh
 bun run dev
 ```
 
-Open [http://localhost:3001](http://localhost:3001) in your browser to see the web application.
-The API is running at [http://localhost:3000](http://localhost:3000).
+- Web: <http://localhost:3001>
+- API server: <http://localhost:3000>
 
-## UI Customization
+To start one application only, use `bun run dev:web` or `bun run dev:server`.
 
-React web apps in this stack share shadcn/ui primitives through `packages/ui`.
+## Tests and checks
 
-- Change design tokens and global styles in `packages/ui/src/styles/globals.css`
-- Update shared primitives in `packages/ui/src/components/*`
-- Adjust shadcn aliases or style config in `packages/ui/components.json` and `apps/web/components.json`
+The root test command generates Prisma Client and runs the web, server, API, and PostgreSQL-backed test suites. Start PostgreSQL and apply migrations first:
 
-### Add more shared components
-
-Run this from the project root to add more primitives to the shared UI package:
-
-```bash
-npx shadcn@latest add accordion dialog popover sheet table -c packages/ui
+```sh
+bun run test
 ```
 
-Import shared components like this:
+The database test connects to the configured database and fails if it cannot connect; it does not silently skip database coverage. Use only the disposable local development database for this command.
 
-```tsx
-import { Button } from "@Pockit/ui/components/button";
+Other root checks:
+
+```sh
+bun run build
+bun run check-types
+bun run check
 ```
 
-### Add app-specific blocks
+`bun run check` is read-only. `bun run format` applies Biome formatting changes and may modify files; inspect its diff before accepting changes.
 
-If you want to add app-specific blocks instead of shared primitives, run the shadcn CLI from `apps/web`.
+## Environment configuration
 
-## Environment Configuration
+Each app/package owns a committed `.env.schema` and safe `.env.example`. Copy the example to the same directory as `.env` for local values. Varlock generates TypeScript accessors during `bun install`; run `bun run env:generate` after editing schemas. Keep local values in ignored `.env` files or a deployment secret manager. Do not paste or commit secret values.
 
-Each app owns its environment schema in `.env.schema`. Varlock generates `src/env.ts` during installation; run `bun run env:generate` after changing a schema. Commit schemas, and keep secrets in ignored env files or your deployment platform.
+## Repository structure
 
-Import the generated `ENV` accessor in application code. Shared database and auth packages receive configuration or initialized clients from the application. See [Varlock's monorepo guide](https://varlock.dev/guides/monorepos/).
-
-Bun's automatic env loading is disabled in `bunfig.toml`; the framework integration or server bootstrap loads Varlock. Node deployments must include Varlock and its dependencies alongside the app schema.
-
-Run standalone Node/Bun tools that use Varlock from the owning app directory so they load that app's schema and env files. `env:generate` only generates TypeScript files; it does not initialize environment values in a subsequent command.
-
-## Deployment
-
-### Docker Compose
-
-- Target: web + server
-- Config: `docker-compose.yml` (app Dockerfiles live in `apps/*/Dockerfile`)
-- Build images: bun run docker:build
-- Start: bun run docker:up
-- Logs: bun run docker:logs
-- Stop: bun run docker:down
-
-Environment variables are read from each app's `.env` file (baked into web builds for public variables) and overridden in `docker-compose.yml` for container networking.
-
-For more details, see the guide on [Deploying with Docker Compose](https://www.better-t-stack.dev/docs/guides/docker).
-
-## Git Hooks and Formatting
-
-- Initialize hooks: `bun run prepare`
-- Run checks: `bun run check`
-
-## Project Structure
-
-```
-Pockit/
-├── apps/
-│   ├── web/         # Frontend application (React + TanStack Start)
-│   └── server/      # Backend API (Elysia, TRPC)
-├── packages/
-│   ├── ui/          # Shared shadcn/ui components and styles
-│   ├── api/         # API layer / business logic
-│   ├── auth/        # Authentication configuration & logic
-│   └── db/          # Database schema & queries
+```text
+apps/
+  web/       React + TanStack Start frontend
+  server/    Elysia HTTP server and tRPC adapter
+packages/
+  api/       tRPC router and API context
+  auth/      Better Auth setup
+  db/        Prisma schema, client, and versioned migrations
+  ui/        Shared UI components and styles
+  config/    Shared TypeScript and tooling configuration
+docs/        Requirements, engineering contracts, and agent guidance
 ```
 
-## Available Scripts
-
-- `bun run dev`: Start all applications in development mode
-- `bun run build`: Build all applications
-- `bun run dev:web`: Start only the web application
-- `bun run dev:server`: Start only the server
-- `bun run check-types`: Check TypeScript types across all apps
-- `bun run db:push`: Push schema changes to database
-- `bun run db:generate`: Generate database client/types
-- `bun run db:migrate`: Run database migrations
-- `bun run db:studio`: Open database studio UI
-- `bun run check`: Run Biome formatting and linting
-- `bun run docker:build`: Build the Docker Compose images
-- `bun run docker:up`: Build and start the Docker Compose stack
-- `bun run docker:logs`: Tail logs from the Docker Compose stack
-- `bun run docker:down`: Stop the Docker Compose stack
-
-## Better Auth Schema Generation
-
-After changing auth plugins or schema options, run `bun run auth:generate` from the project root. The script runs the Better Auth CLI through `varlock run` from the owning app directory, loading the auth instance from `src/services.ts`. Review the schema changes, then use your ORM's migration workflow to apply them.
+Shared UI primitives live in `packages/ui/src/components`. Add app-specific UI in `apps/web` and domain/API behavior in the relevant shared package. See `AGENTS.md` for product scope, privacy rules, issue workflow, and evidence requirements.

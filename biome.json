@@ -26,12 +26,17 @@
       "!**/.svelte-kit",
       "!**/wrangler.jsonc",
       "!**/.source",
-      "!**/convex/_generated"
+      "!**/convex/_generated",
+      "!**/*.md",
+      "!**/.output",
+      "!**/src/env.ts",
+      "!**/generated",
+      "!**/.agents"
     ]
   },
   "formatter": {
     "enabled": true,
-    "indentStyle": "tab"
+    "indentStyle": "space"
   },
   "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "linter": {

@@ -7,11 +7,12 @@
   },
   "scripts": {
     "check-types": "tsc --noEmit",
-    "db:push": "prisma db push",
-    "db:generate": "prisma generate",
-    "db:migrate": "prisma migrate dev",
-    "db:migrate:deploy": "prisma migrate deploy",
-    "db:studio": "prisma studio"
+    "test": "varlock run -- bun test",
+    "db:push": "bun ./node_modules/prisma/build/index.js db push",
+    "db:generate": "bun ./node_modules/prisma/build/index.js generate",
+    "db:migrate": "bun ./node_modules/prisma/build/index.js migrate dev",
+    "db:migrate:deploy": "bun ./node_modules/prisma/build/index.js migrate deploy",
+    "db:studio": "bun ./node_modules/prisma/build/index.js studio"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",

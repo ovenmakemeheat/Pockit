@@ -1,0 +1,22 @@
+name: pockit-local
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: pockit
+      POSTGRES_PASSWORD: pockit-local-only
+      POSTGRES_DB: pockit
+    ports:
+      - "127.0.0.1:${POCKIT_POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pockit-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pockit -d pockit"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+volumes:
+  pockit-postgres-data:
