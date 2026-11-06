@@ -58,6 +58,12 @@ bun run db:migrate
 
 For each schema change, create and review a migration with `bun run db:migrate -- --name <descriptive_name>`, then commit the migration with the schema change. Use `bun run db:migrate:deploy` to apply committed migrations in a deployment environment. Do not use `db:push` as a substitute for versioned team migrations. Never reset or apply migrations to an unknown database.
 
+Seed the synthetic demo identities and owned finance accounts after applying migrations. Set `POCKIT_DEMO_PASSWORD` in the ignored `apps/server/.env` file first; it is used only to hash credentials for the local demo User, second User, and Administrator. The same local password is used for those synthetic identities. The seed command refuses to run in production, and reruns do not delete transactions or reset seeded opening balances:
+
+```sh
+bun run db:seed
+```
+
 Prisma CLI commands run with Bun. After changing an environment schema, regenerate Varlock accessors with:
 
 ```sh

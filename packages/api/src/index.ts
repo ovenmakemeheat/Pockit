@@ -9,11 +9,11 @@ export const router = t.router;
 export const publicProcedure = t.procedure;
 
 export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
-  if (!ctx.session) {
+  if (ctx.session?.user.isEnabled !== true) {
     throw new TRPCError({
       code: "UNAUTHORIZED",
       message: "Authentication required",
-      cause: "No session",
+      cause: "No active session",
     });
   }
   return next({
@@ -23,3 +23,18 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
     },
   });
 });
+
+function requireRole(role: "User" | "Administrator") {
+  return protectedProcedure.use(({ ctx, next }) => {
+    if (ctx.session.user.role !== role) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: `${role} role required`,
+      });
+    }
+    return next();
+  });
+}
+
+export const userProcedure = requireRole("User");
+export const administratorProcedure = requireRole("Administrator");

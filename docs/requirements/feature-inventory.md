@@ -12,7 +12,7 @@ This inventory maps every stable FR, BR, and NFR in the current SRS to one or mo
 
 | Feature ID | Feature / user outcome | Planned sprint | Dependencies / gates | Supporting requirements |
 | --- | --- | --- | --- | --- |
-| **FEAT-01** | **Authentication and session lifecycle:** Users can log in, log out, and retrieve current identity using the documented session lifecycle. | Sprint 1 — required | Project Setup #9 is complete. Session and disabled-user behavior are gated by the auth contract and OQ-05. | FR-01, FR-02; BR-11; NFR-07 |
+| **FEAT-01** | **Authentication and session lifecycle:** Users can log in, log out, and retrieve current identity using the documented session lifecycle. | Sprint 1 — required | Project Setup #9 is complete. Disabled-user revocation follows ADR-0002 and is implemented/tested under Issue #8. | FR-01, FR-02; BR-11; NFR-07 |
 | **FEAT-02** | **Server-side role and ownership controls:** Users access only their own financial data; Administrators manage platform access without accessing any financial record or summary. | Sprint 1 — required | FEAT-01. Administrator finance-data denial is tested at the backend/API boundary. | FR-02, FR-03; BR-08, BR-11; NFR-01, NFR-07 |
 | **FEAT-03** | **Synthetic Sprint 1 demo data:** Seed demo Users, a bank/Cash Account, a credit-card/Loan Taken Account, and Income/Expense categories. | Sprint 1 — required | Project Setup #9; use synthetic data only. | FR-14; BR-01; NFR-02, NFR-05 |
 | **FEAT-04** | **Opening balance and transaction date foundation:** Establish the opening bank balance and record dates for the Sprint 1 Transactions. | Sprint 1 — required | FEAT-03; currency/date open questions must remain visible and must not be guessed. | FR-05; BR-05, BR-06, BR-10; NFR-02, NFR-04, NFR-05 |
@@ -57,7 +57,7 @@ Each row is one stable requirement in the SRS. A requirement may map to multiple
 | **BR-08** | FEAT-02, FEAT-08, FEAT-11, FEAT-12 | Sprint 1, Sprint 2 proposed, Sprint 3 proposed | Ownership boundary applies to platform access, search, and correction. |
 | **BR-09** | FEAT-13 | Sprint 3 proposed | Favorites reference existing transactions; duplicate is distinct/editable. |
 | **BR-10** | FEAT-04, FEAT-05, FEAT-06, FEAT-08, FEAT-10, FEAT-12 | Sprint 1, Sprint 2 proposed, Sprint 3 proposed | Exact arithmetic throughout; OQ-01/OQ-02 remain gates. |
-| **BR-11** | FEAT-01, FEAT-02, FEAT-08 | Sprint 1, Sprint 2 proposed, Sprint 3 proposed | Disabled Users are denied protected access; existing-session policy remains OQ-05. |
+| **BR-11** | FEAT-01, FEAT-02, FEAT-08 | Sprint 1, Sprint 2 proposed, Sprint 3 proposed | Disabled Users cannot create sessions or access protected operations; disabling revokes stored sessions immediately (ADR-0002). |
 | **NFR-01** | FEAT-02, FEAT-08, FEAT-11, FEAT-12 | Sprint 1, Sprint 2 proposed, Sprint 3 proposed | Server-side privacy/access tests across all relevant operations, including Transaction correction. |
 | **NFR-02** | FEAT-03, FEAT-04, FEAT-05, FEAT-06, FEAT-07, FEAT-08, FEAT-09, FEAT-10, FEAT-11, FEAT-12, FEAT-13, FEAT-14 | Sprint 1, Sprint 2 proposed, Sprint 3 proposed | Seeded data and accepted financial records persist across all product features. |
 | **NFR-03** | FEAT-05, FEAT-06, FEAT-08, FEAT-10, FEAT-12 | Sprint 1, Sprint 2 proposed, Sprint 3 proposed | Transaction and balance effects must commit or reject together. |
@@ -81,9 +81,9 @@ Each row is one stable requirement in the SRS. A requirement may map to multiple
 | --- | --- | --- |
 | The Theme 7 “Later sprints” paragraph mentions reports, but the SRS has no separate report-specific FR defining report content, periods, or filters. | FEAT-14 provisionally maps the reporting outcome to FR-10's summaries/category spending. Do not invent report formats or period rules. | Issue #6 should decide whether FR-10 is sufficient or the SRS needs a stable additional FR before report contracts are written. |
 | Exact Sprint 2 versus Sprint 3 assignment is not approved. | The inventory proposes S2/S3 placements to give every feature a planned sprint, explicitly marked proposed. | Issue #6 ratifies or revises the allocations based on dependencies and team capacity. |
-| Currency code/precision and rounding rules (OQ-01/OQ-02) are unresolved. | FEAT-04–FEAT-06 and FEAT-10 retain exact-arithmetic requirements; no currency is assumed. | Resolve before amount storage/validation contracts and implementation. |
+| Currency code/precision and rounding rules (OQ-01/OQ-02) are resolved for Sprint 1 in ADR-0001. | FEAT-04–FEAT-06 and FEAT-10 use the exact Sprint 1 policy; no later currency or rounding behavior is implied. | Apply the Issue #8 policy; future extensions need separate decisions. |
 | Transaction correction and audit behavior (OQ-04) is unspecified. | FEAT-12 is proposed for Sprint 2 but explicitly gated; no correction semantics are invented. | Resolve before FEAT-12's Feature-Level SDS/STS. |
-| Disabled-user session revocation, date/time-zone policy, workload/accessibility targets, and amount boundary rules remain open (OQ-03, OQ-05–OQ-07). | Mapped to the relevant identity, date, and financial-validation features without treating a value as approved. | Resolve in Issue #7 feature contracts or before release as applicable. |
+| Date/time-zone policy, workload/accessibility targets, and future amount boundary rules remain open (OQ-03, OQ-06–OQ-07). Disabled-user session revocation is resolved by ADR-0002. | Mapped to the relevant identity, date, and financial-validation features without treating an assumption as approved. | Resolve remaining questions in Issue #7 feature contracts or before release as applicable. |
 
 ## 4. Inventory validation
 

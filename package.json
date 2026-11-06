@@ -32,6 +32,7 @@
     "db:generate": "turbo run db:generate -F @Pockit/db --",
     "db:migrate": "turbo run db:migrate -F @Pockit/db --",
     "db:migrate:deploy": "turbo run db:migrate:deploy -F @Pockit/db --",
+    "db:seed": "turbo run seed:demo -F server --",
     "db:dev:up": "docker compose -f docker-compose.db.yml up -d",
     "db:dev:down": "docker compose -f docker-compose.db.yml down",
     "docker:build": "docker compose build",

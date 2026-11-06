@@ -38,6 +38,10 @@
       "cache": false,
       "interactive": true
     },
+    "seed:demo": {
+      "cache": false,
+      "passThroughEnv": ["POCKIT_DEMO_PASSWORD"]
+    },
     "db:studio": {
       "cache": false,
       "persistent": true

@@ -1,11 +1,11 @@
 # Software Requirements Specification: Pockit
 
 **Project:** Personal Money and Expense Logging System (CPE 334, Theme 7)<br>
-**Version:** 0.1 — Draft baseline for team review<br>
+**Version:** 0.2 — Sprint 1 decision update; teammate review pending in Issue #8<br>
 **Issue:** [#3 — Sprint 1: SRS and product scope](https://github.com/ovenmakemeheat/Pockit/issues/3)<br>
 **Source of truth:** `docs/assignments/final/group_work_specs_v1.pdf`, section 6, item 7; the approved project constraints in `AGENTS.md`; and the Sprint 1 acceptance scope in Issue #8.
 
-This SRS records the approved product scope and separates requirements from unresolved choices. Requirement identifiers are stable; do not renumber them when wording changes. Add new identifiers rather than reusing retired ones. Open questions below are not approved decisions and must be resolved in the relevant design/feature contract before implementation depends on them.
+This SRS records the approved product scope and separates recorded Sprint 1 decisions from still-open questions. Requirement identifiers are stable; do not renumber them when wording changes. Add new identifiers rather than reusing retired ones. Decisions delegated by the product owner are identified as such and remain subject to the required teammate review; unresolved questions must be settled in the relevant design/feature contract before implementation depends on them.
 
 ## 1. Purpose and product scope
 
@@ -71,8 +71,8 @@ Seeded demo Users are sufficient for the project; public self-registration is no
 | **BR-07** | Borrowing and Loan Taken repayments, and lending and Loan Given repayments, affect the corresponding debt/receivable balances but are not classified as income or expenses. |
 | **BR-08** | A User may read or change only their own financial records. An Administrator may manage platform User access but has no permission to view or modify financial records or summaries. The backend must enforce this boundary regardless of UI behavior. |
 | **BR-09** | Favorites refer to existing Transactions. Duplicating a Transaction creates a distinct new editable Transaction and does not mutate the source Transaction. |
-| **BR-10** | Monetary calculations must use exact decimal or integer-minor-unit arithmetic, never imprecise binary floating-point arithmetic. Currency code, permitted precision, rounding mode, and treatment of unrepresentable amounts remain unresolved (see OQ-01 and OQ-02); the implementation must not silently assume them. |
-| **BR-11** | Disabled Users must not gain access to protected operations. The exact effect on existing sessions and session revocation timing is unresolved (OQ-05). |
+| **BR-10** | Monetary calculations must use exact decimal or integer-minor-unit arithmetic, never imprecise binary floating-point arithmetic. Sprint 1 uses THB at two fractional digits; inputs beyond that scale are rejected and values are never implicitly rounded. Additional currencies and mixed-currency behavior remain unresolved (OQ-01). |
+| **BR-11** | Disabled Users cannot establish new sessions or access protected operations. Disabling a User immediately revokes all existing sessions; subsequent protected requests fail and new sign-ins are blocked (ADR-0002). |
 
 ## 5. Non-functional requirements
 
@@ -81,7 +81,7 @@ Seeded demo Users are sufficient for the project; public self-registration is no
 | **NFR-01 — Privacy and authorization** | Every protected financial API operation must enforce authenticated User ownership and Administrator restrictions server-side. Verification must include unauthenticated access, cross-User access, forbidden role operations, and Administrator attempts to access financial records/summaries. |
 | **NFR-02 — Persistence** | Accepted Accounts, Transactions, allocations, and balance effects must persist in the database and remain available after an application restart. Verify with a database-backed test or reproducible restart scenario. |
 | **NFR-03 — Financial integrity** | Transaction totals, allocations, and all balance effects must be committed or rejected together; a rejected operation must leave no partial Transaction or balance change. Verify with valid, invalid, and boundary cases. |
-| **NFR-04 — Money precision** | Monetary storage and arithmetic must avoid binary floating-point error. Once OQ-01/OQ-02 are approved, tests must cover the smallest supported unit and rounding/precision boundaries. |
+| **NFR-04 — Money precision** | Monetary storage and arithmetic must avoid binary floating-point error. Sprint 1 uses exact THB minor units; tests cover 0.01 THB and reject excess precision without rounding. Future currency scales require explicit decisions. |
 | **NFR-05 — Secret and demo-data safety** | Repository examples and tests use synthetic data. Real credentials, secrets, and personal/financial data must not be committed. Verify tracked examples/configuration and review changed files for sensitive data. |
 | **NFR-06 — Verifiability** | Each implemented requirement must link to observable acceptance criteria and actual tests/evidence. Required authentication, authorization, persistence, and financial-invariant behavior must not be represented solely by UI mocks. |
 | **NFR-07 — Credential protection** | If the application manages passwords, it must persist only suitable password hashes and never plaintext passwords. Verify the authentication configuration and persisted credential representation without exposing secret values. |
@@ -104,19 +104,19 @@ The remaining requirements include full Account management, the broader payment/
 4. Seeded demo accounts are sufficient for Sprint 1. Self-registration and account recovery are not required.
 5. No real bank/payment/messaging integration, shared or period budgets, or automatic recurring Transactions are included without explicit approval.
 6. The Sprint 1 example is the minimum vertical slice, not the entire product scope.
-7. Exact currency and date policies are not approved by this SRS; see open questions. No implementation should infer them from locale or sample data.
+7. Sprint 1 money/date behavior is recorded in ADR-0001. THB is selected for this increment by explicit product-owner delegation and is pending teammate review; no later-sprint currency or conversion behavior is inferred.
 
-## 8. Open questions — decisions not yet approved
+## 8. Open questions and recorded decisions
 
-| ID | Question | Must be resolved by |
+| ID | Question / current resolution | Remaining decision or status |
 | --- | --- | --- |
-| **OQ-01** | What currency/currencies are supported, and what is the storage/display precision for each? | Before the financial data model and amount validation are finalized. |
-| **OQ-02** | What rounding mode, if any, applies to calculations, and how are amounts with excess fractional digits rejected or rounded? | Before transaction calculation implementation; maintain exact arithmetic. |
-| **OQ-03** | What is the canonical date/time-zone policy, and what is the default Transaction date? | Before transaction date and summary-period contracts. |
+| **OQ-01** | Sprint 1 uses one currency, THB, at two fractional digits, selected by Guntee under explicit product-owner delegation. | Teammate review is pending in Issue #8. Additional currencies, conversion, and mixed-currency behavior remain undecided and outside the Sprint 1 slice. |
+| **OQ-02** | Exact arithmetic; reject amounts with more than two fractional digits; no implicit rounding of posted or derived Sprint 1 values. | Guntee reports this policy confirmed with the team/course. Any future calculation requiring rounding needs a separately recorded decision. |
+| **OQ-03** | Require an explicit `YYYY-MM-DD` calendar date; store and return it without timezone conversion or an implicit current-date default. Sprint 1 summaries use all-time totals with no implicit date filter. | Guntee reports the date policy confirmed with the team/course. Any later date-filtering or alternate reporting-period behavior requires a separate decision. |
 | **OQ-04** | What are the exact edit/delete/correction and audit-history rules for posted Transactions? | Before implementing Transaction correction. |
-| **OQ-05** | When an Administrator disables a User, are existing sessions invalidated immediately, and how are those sessions revoked? | Before final authentication/administration contract approval. |
+| **OQ-05 — resolved** | Guntee selected immediate revocation: disablement removes all stored sessions, blocks new session creation, and causes subsequent protected requests to fail. | Implement and test in Issue #8; teammate review is required in its PR. See ADR-0002. |
 | **OQ-06** | What measurable performance, supported-browser, and accessibility targets are required for the course release? | Before release criteria are finalized. |
-| **OQ-07** | Are there any account-specific minimum/maximum amount, zero-value, negative-value, or allocation-count constraints beyond allocation totals matching the Transaction total? | Before detailed transaction validation contracts. |
+| **OQ-07** | Sprint 1 monetary amounts and allocation lines must be greater than zero; reject a Loan Taken repayment above its outstanding debt and a Cash outflow above available balance. | Guntee reports these policies confirmed with the team/course. No product-specific maximum amount or allocation-line count is set; do not invent one. Any such limit remains open for a later approved scope. |
 
 ## 9. Requirements validation checklist
 

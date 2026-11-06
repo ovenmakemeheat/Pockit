@@ -37,6 +37,7 @@
       },
       "devDependencies": {
         "@Pockit/config": "workspace:*",
+        "@trpc/client": "catalog:",
         "@types/bun": "catalog:",
         "tsdown": "^0.23.0",
         "typescript": "catalog:",
@@ -46,6 +47,7 @@
       "name": "web",
       "dependencies": {
         "@Pockit/api": "workspace:*",
+        "@Pockit/auth": "workspace:*",
         "@Pockit/ui": "workspace:*",
         "@tailwindcss/vite": "^4.3.3",
         "@tanstack/react-form": "^1.33.5",

@@ -38,6 +38,9 @@ export default function UserMenu() {
         <DropdownMenuGroup>
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => navigate({ to: "/dashboard" })}>
+            {session.user.role === "Administrator" ? "User access" : "Overview"}
+          </DropdownMenuItem>
           <DropdownMenuItem>{session.user.email}</DropdownMenuItem>
           <DropdownMenuItem
             variant="destructive"
