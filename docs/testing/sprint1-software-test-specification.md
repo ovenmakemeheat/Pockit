@@ -107,11 +107,12 @@ For every failure/denial test involving a write, inspect persistent state before
 | Test ID | Level | Preconditions and input | Expected observable result | Covers |
 | --- | --- | --- | --- | --- |
 | **STS-CARD-01** | API + DB | User A selects their Loan Taken/card Account and posts a valid purchase total `C` split across distinct Expense allocations `E1` and `E2`, where `E1 + E2 = C`. | Card debt increases by `C`; each Expense category increases by its line amount; the dated Transaction and both allocations persist. | F6-AC-01, F6-AC-03, F6-AC-05, F8-AC-01 |
-| **STS-CARD-02** | API + DB | Submit card purchase with mismatched allocation total, no allocations, fewer than two lines for the required split demo, or a non-Expense/foreign-owned allocation. | Invalid case is rejected; no purchase, allocation, debt, category, summary, or history change is committed. | F6-AC-04, F8-AC-02, F8-AC-03 |
+| **STS-CARD-02** | API + DB | In the Sprint 1 card-purchase flow, submit a mismatched allocation total, no allocations, a non-Expense allocation, or a foreign-owned allocation. | Invalid case is rejected; no purchase, allocation, debt, category, summary, or history change is committed. | F6-AC-04, F8-AC-02, F8-AC-03 |
 | **STS-CARD-03** | API + DB | With a valid known card debt and Cash position, submit a Cash-funded repayment `R` allocated to the owned Loan Taken/card Account. | Cash decreases by `R`; card debt decreases by `R`; no Income or Expense total changes because of repayment; the repayment persists. | F6-AC-02, F6-AC-03, F6-AC-05, F8-AC-01 |
 | **STS-CARD-04** | API + DB | Submit repayment using a wrong source/destination Account type or another User's Account. | Request is rejected with no partial record or financial effect and no foreign data disclosure. | F6-AC-04, F8-AC-02, F8-AC-03 |
 | **STS-CARD-05** | DB + API | Run the complete isolated sequence: opening balance `O`, salary `S`, split card purchase `C`, repayment `R`; read all balances and categories through the API after writes. | `Cash = O + S - R`; card debt equals starting debt plus `C - R`; Income increases only by salary; Expense categories increase by `E1`/`E2`; each result matches persisted records. Values use an approved valid fixture. | F6-AC-03, F6-AC-05, F7-AC-01, F7-AC-02, F8-AC-01 |
 | **STS-CARD-06** | API + DB | Attempt a repayment exceeding current card debt or a payment that would exceed an approved Cash boundary. | Result follows an explicitly approved OQ-07 rule. Until approval, do not assert overpayment/overdraft rejection or acceptance; report **BLOCKED**. | F6-AC-04 |
+| **STS-CARD-07** | API + DB | User A posts a valid Sprint 1 card purchase with exactly one Expense allocation equal to the Transaction total, using a valid fixture amount. Read persisted debt and category totals before and after. | Purchase succeeds and persists; card debt increases by the total and the selected Expense category increases by that same line amount. No second allocation is required for this valid one-line purchase. | F6-AC-01, F6-AC-03, F8-AC-01 |
 
 ### 4.7 Financial views and persistence — FEAT-07
 
@@ -168,9 +169,9 @@ Every contract AC appears below. A criterion marked **gate** has a planned test 
 | F5-AC-03 | STS-RECEIVE-02, STS-RECEIVE-03, STS-RECEIVE-05 | Pending implementation; scale case gated |
 | F5-AC-04 | STS-RECEIVE-04, STS-AUTHZ-05 | Pending implementation |
 | F5-AC-05 | STS-RECEIVE-01, STS-VIEW-02 | Pending implementation; summary scope gated |
-| F6-AC-01 | STS-CARD-01, STS-CARD-02, STS-INT-02 | Pending implementation; precision case gated |
+| F6-AC-01 | STS-CARD-07, STS-CARD-01, STS-INT-02 | Pending implementation; precision case gated |
 | F6-AC-02 | STS-CARD-03 | Pending implementation |
-| F6-AC-03 | STS-CARD-01, STS-CARD-03, STS-CARD-05 | Pending implementation |
+| F6-AC-03 | STS-CARD-01, STS-CARD-03, STS-CARD-05, STS-CARD-07 | Pending implementation |
 | F6-AC-04 | STS-CARD-02, STS-CARD-04, STS-CARD-06 | Pending implementation; OQ-07 case gated |
 | F6-AC-05 | STS-CARD-01, STS-CARD-03, STS-CARD-05, STS-VIEW-02 | Pending implementation; summary scope gated |
 | F7-AC-01 | STS-CARD-05, STS-VIEW-01, STS-UI-02 | Pending implementation |
@@ -178,7 +179,7 @@ Every contract AC appears below. A criterion marked **gate** has a planned test 
 | F7-AC-03 | STS-OPEN-04, STS-VIEW-03, STS-VIEW-04, STS-UI-02 | Pending implementation; date case gated |
 | F7-AC-04 | STS-RECEIVE-06, STS-VIEW-05, STS-UI-02 | Pending implementation |
 | F7-AC-05 — OQ-01/02/03 gates | STS-OPEN-04, STS-OPEN-05, STS-VIEW-02, STS-VIEW-06, STS-UI-02 | Pending decisions and implementation |
-| F8-AC-01 — OQ-01/02-dependent checks | STS-OPEN-05, STS-RECEIVE-01, STS-CARD-01, STS-CARD-03, STS-CARD-05, STS-VIEW-01, STS-INT-02 | Pending implementation; scale-specific checks gated |
+| F8-AC-01 — OQ-01/02-dependent checks | STS-OPEN-05, STS-RECEIVE-01, STS-CARD-01, STS-CARD-03, STS-CARD-05, STS-CARD-07, STS-VIEW-01, STS-INT-02 | Pending implementation; scale-specific checks gated |
 | F8-AC-02 | STS-AUTHZ-04, STS-AUTHZ-05, STS-OPEN-03, STS-RECEIVE-02, STS-RECEIVE-03, STS-CARD-02, STS-CARD-04, STS-INT-01 | Pending implementation |
 | F8-AC-03 | STS-AUTHZ-01, STS-AUTHZ-02, STS-AUTHZ-03, STS-AUTHZ-04, STS-AUTHZ-05, STS-AUTHZ-06, STS-AUTHZ-07, STS-AUTHZ-08, STS-AUTHZ-09, STS-RECEIVE-04, STS-CARD-02, STS-CARD-04, STS-VIEW-04, STS-UI-03 | Pending implementation; OQ-05 cases gated |
 | F8-AC-04 | STS-AUTH-06, STS-SEED-04, STS-INT-03 | Pending implementation |

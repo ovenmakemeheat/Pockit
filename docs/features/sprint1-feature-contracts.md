@@ -180,15 +180,15 @@ Derive the acting identity from a server-validated session. Never use a client-p
 
 **Definition of Done / evidence:** Link criteria to STS-RECEIVE and DB tests; demonstrate one valid salary receipt and meaningful invalid allocation rejection through the persisted API seam. Record tested commit and exact commands/results.
 
-### FEAT-06 — Split credit-card purchase and bank repayment
+### FEAT-06 — Credit-card purchase and bank repayment
 
-**Outcome and actors:** A User records the required Loan Taken purchase split across at least two Expense categories, then repays the card from Cash, with exact and consistent balances.
+**Outcome and actors:** A User can record a valid Loan Taken/credit-card purchase with one or more Expense allocation lines, then repay the card from Cash, with exact and consistent balances. The Sprint 1 demonstration specifically includes a purchase split across at least two Expense categories.
 
-**Workflow:** For the purchase, the User selects their Loan Taken/credit-card Account and allocates the purchase total across at least two of their Expense Accounts (e.g. dining and groceries). For repayment, the User selects their Cash/bank Account and allocates the repayment to that same Loan Taken Account as a repayment. Both are separately dated, persisted Transactions; the candidate date input/default behavior remains subject to OQ-03 approval. The Sprint 1 scope does not add transfers, borrowing into other accounts, Loan Given behavior, or remaining transaction forms.
+**Workflow:** The SRS requires a payment/charge Transaction to contain one or more allocation lines; for this Sprint 1 card-purchase flow, the User selects their Loan Taken/credit-card Account and allocates the purchase total across one or more owned Expense Accounts. The required demonstration uses at least two Expense Accounts (e.g. dining and groceries). A single Expense allocation equal to the total is also valid. Other payment/charge destination types remain outside this Sprint 1 feature. For repayment, the User selects their Cash/bank Account and allocates the repayment to that same Loan Taken Account as a repayment. Both are separately dated, persisted Transactions; the candidate date input/default behavior remains subject to OQ-03 approval. The Sprint 1 scope does not add transfers, borrowing into other accounts, Loan Given behavior, or remaining transaction forms.
 
 **UI/API/data contract:** Use the approved payment/charge form and an explicit date. A card purchase using Loan Taken increases that card's outstanding debt by the total; each Expense category increases by its allocation. A repayment selected from Cash decreases bank balance by the total and decreases the Loan Taken debt by the repayment amount. Repayment does not create Income or Expense. Values cross the API as exact decimal strings.
 
-**Validation and errors:** Require an owned Loan Taken source and owned Expense allocations for the purchase; at least two Expense allocation lines for the Sprint 1 split demonstration; exact allocation equality. Require an owned Cash source and owned Loan Taken repayment target for the repayment. Reject mismatched totals, no/invalid allocations, wrong types, foreign-owner references, and other unauthorized writes atomically. Whether a repayment may exceed current debt, whether cash may be overdrawn, and zero/negative/boundary amounts are not specified; do not invent those rules (OQ-07).
+**Validation and errors:** Require an owned Loan Taken source and one or more owned Expense allocation lines for a Sprint 1 card purchase; allocation amounts must exactly equal the total. The two-Expense-line minimum applies only to the required split demonstration, not to general allocation validity. Require an owned Cash source and owned Loan Taken repayment target for the repayment. Reject mismatched totals, no/invalid allocations, wrong types, foreign-owner references, and other unauthorized writes atomically. Whether a repayment may exceed current debt, whether cash may be overdrawn, and zero/negative/boundary amounts are not specified; do not invent those rules (OQ-07).
 
 **Permissions:** User role and ownership only. Administrator and unauthenticated callers are denied.
 
@@ -196,7 +196,7 @@ Derive the acting identity from a server-validated session. Never use a client-p
 
 **Acceptance criteria:**
 
-- **F6-AC-01:** A valid credit-card purchase allocated across at least two Expense Accounts increases card debt by the exact total and increases each category by its exact allocation.
+- **F6-AC-01:** A valid Sprint 1 credit-card purchase with one or more Expense allocation lines increases card debt by the exact total and each Expense category by its line amount. The demonstration also proves a purchase split across at least two Expense Accounts.
 - **F6-AC-02:** A valid repayment decreases the selected Cash balance and Loan Taken debt by the exact repayment amount and creates no Income/Expense allocation effect.
 - **F6-AC-03:** The purchase and repayment Transactions and all allocation lines persist and appear in owner-scoped history.
 - **F6-AC-04:** Purchase/repayment allocation mismatch, missing lines, invalid target type, or foreign-owned reference is rejected with no partial record or balance/category effect.
