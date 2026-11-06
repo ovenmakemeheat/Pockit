@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { AdminUserManagement } from "@/components/admin-user-management";
 import { FinanceDashboard } from "@/components/finance-dashboard";
 import { useTRPC } from "@/utils/trpc";
+import { userScopedQueryKey } from "@/utils/user-scoped-query-key";
 
 export const Route = createFileRoute("/_auth/dashboard")({
   component: RouteComponent,
@@ -21,7 +22,7 @@ function RouteComponent() {
     return <AdministratorAccess />;
   }
   if (actor?.role === "User") {
-    return <UserFinanceOverview name={actor.name} />;
+    return <UserFinanceOverview name={actor.name} userId={actor.id} />;
   }
 
   return (
@@ -80,12 +81,30 @@ function AdministratorAccess() {
   );
 }
 
-function UserFinanceOverview({ name }: { name: string }) {
+function UserFinanceOverview({
+  name,
+  userId,
+}: {
+  name: string;
+  userId: string;
+}) {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const accounts = useQuery(trpc.finance.accounts.list.queryOptions());
-  const history = useQuery(trpc.finance.transactions.history.queryOptions());
-  const summary = useQuery(trpc.finance.summary.get.queryOptions());
+  const accountsQuery = trpc.finance.accounts.list.queryOptions();
+  const historyQuery = trpc.finance.transactions.history.queryOptions();
+  const summaryQuery = trpc.finance.summary.get.queryOptions();
+  const accounts = useQuery({
+    ...accountsQuery,
+    queryKey: userScopedQueryKey(accountsQuery.queryKey, userId),
+  });
+  const history = useQuery({
+    ...historyQuery,
+    queryKey: userScopedQueryKey(historyQuery.queryKey, userId),
+  });
+  const summary = useQuery({
+    ...summaryQuery,
+    queryKey: userScopedQueryKey(summaryQuery.queryKey, userId),
+  });
 
   const refreshFinance = () => queryClient.invalidateQueries();
   const openingBalance = useMutation(
