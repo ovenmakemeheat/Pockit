@@ -286,6 +286,100 @@ describe("authentication HTTP contract", () => {
     expect(await afterLogout.json()).toBeNull();
   });
 
+  it("revokes a session created after User disablement wins the creation race", async () => {
+    const administratorSignIn = await authRequest("sign-in/email", {
+      method: "POST",
+      headers: { "content-type": "application/json", origin: corsOrigin },
+      body: JSON.stringify({ email: administratorEmail, password }),
+    });
+    const administratorCookie = administratorSignIn.headers
+      .getSetCookie()
+      .map((value) => value.split(";", 1)[0])
+      .join("; ");
+    const administratorSession = await auth.api.getSession({
+      headers: new Headers({ cookie: administratorCookie, origin: corsOrigin }),
+    });
+    expect(administratorSession?.user.role).toBe("Administrator");
+    const administrator = appRouter.createCaller({
+      db: database,
+      session: administratorSession,
+    });
+
+    let resumeSessionCreation!: () => void;
+    const sessionCreationGate = new Promise<void>((resolve) => {
+      resumeSessionCreation = resolve;
+    });
+    let enabledCheckReached!: () => void;
+    const enabledCheck = new Promise<void>((resolve) => {
+      enabledCheckReached = resolve;
+    });
+    let pauseEnabledCheck = true;
+    // Pause after the enabled check's DB read to reproduce the session-creation race deterministically.
+    const synchronizedDatabase = database.$extends({
+      query: {
+        user: {
+          async findUnique({ args, query }) {
+            const result = await query(args);
+            if (
+              pauseEnabledCheck &&
+              args.where.id === userId &&
+              args.select?.isEnabled === true
+            ) {
+              pauseEnabledCheck = false;
+              enabledCheckReached();
+              await sessionCreationGate;
+            }
+            return result;
+          },
+        },
+      },
+    });
+    const racingAuth = createAuth(
+      {
+        BETTER_AUTH_URL: baseURL,
+        BETTER_AUTH_SECRET: "test-only-secret-that-is-not-a-real-credential",
+        CORS_ORIGIN: corsOrigin,
+      },
+      synchronizedDatabase as unknown as typeof database,
+    );
+    const racingApp = createServerApp({
+      corsOrigin,
+      authHandler: (request) => racingAuth.handler(request),
+      trpcHandler: async () => new Response("API"),
+    });
+    const signInPromise = racingApp.handle(
+      new Request(`${baseURL}/api/auth/sign-in/email`, {
+        method: "POST",
+        headers: { "content-type": "application/json", origin: corsOrigin },
+        body: JSON.stringify({ email, password }),
+      }),
+    );
+
+    await enabledCheck;
+    try {
+      await administrator.admin.users.setEnabled({ userId, isEnabled: false });
+    } finally {
+      resumeSessionCreation();
+    }
+
+    const signIn = await signInPromise;
+    expect(signIn.status).toBe(200);
+    const userCookie = signIn.headers
+      .getSetCookie()
+      .map((value) => value.split(";", 1)[0])
+      .join("; ");
+    expect(userCookie).not.toBe("");
+    expect(await database.session.count({ where: { userId } })).toBe(0);
+
+    await administrator.admin.users.setEnabled({ userId, isEnabled: true });
+    const resurrectedIdentity = await racingApp.handle(
+      new Request(`${baseURL}/api/auth/get-session`, {
+        headers: { cookie: userCookie, origin: corsOrigin },
+      }),
+    );
+    expect(await resurrectedIdentity.json()).toBeNull();
+  });
+
   it("revokes an active User session immediately when an Administrator disables the User", async () => {
     const userSignIn = await authRequest("sign-in/email", {
       method: "POST",

@@ -54,6 +54,19 @@ export function createAuth(
               return false;
             }
           },
+          after: async (session) =>
+            database.$transaction(async (transaction) => {
+              await transaction.$queryRaw`SELECT id FROM "user" WHERE id = ${session.userId} FOR UPDATE`;
+              const user = await transaction.user.findUnique({
+                where: { id: session.userId },
+                select: { isEnabled: true },
+              });
+              if (!user?.isEnabled) {
+                await transaction.session.deleteMany({
+                  where: { id: session.id },
+                });
+              }
+            }),
         },
       },
     },
