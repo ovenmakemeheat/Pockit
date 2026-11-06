@@ -5,7 +5,7 @@
 **Feature contract:** [Sprint 1 Feature-Level SDS](../features/sprint1-feature-contracts.md)<br>
 **Requirements:** [SRS](../requirements/srs.md), [Feature Inventory](../requirements/feature-inventory.md), [System-Level SDS](../architecture/system-level-sds.md)
 
-> **Status:** Issue #8 implementation is in progress. The source tree captured in implementation commit `45a935be1d35d31afa6a00a45cb2a6fbac08263f` passed the root suite (48 tests), root type/build checks (6 Turbo tasks), targeted Biome (35 changed source/config files), migration status, secret-pattern scan, and `git diff --check`. The test-spec execution record was updated after the application checks; no application source changed after those checks. ADR-0001 and ADR-0002 still require specific teammate review in the Issue #8 PR. OQ-05 is resolved by ADR-0002. Historical pre-implementation failing output was not captured in this execution record; do not claim TDD-first evidence for those changes. Future currency/amount-limit extensions remain outside this Sprint 1 slice.
+> **Status:** Issue #8 implementation is in progress. The source tree captured in implementation commit `45a935be1d35d31afa6a00a45cb2a6fbac08263f` passed the root suite (48 tests), root type/build checks (6 Turbo tasks), targeted Biome (35 changed source/config files), migration status, secret-pattern scan, and `git diff --check`. The test-spec execution record was updated after the application checks; no application source changed after those checks. PR [#23](https://github.com/ovenmakemeheat/Pockit/pull/23) is open to `staging-1`, with @MadMax168 requested as reviewer. ADR-0001 and ADR-0002 still require specific teammate review in that PR. OQ-05 is resolved by ADR-0002. Historical pre-implementation failing output was not captured in this execution record; do not claim TDD-first evidence for those changes. Future currency/amount-limit extensions remain outside this Sprint 1 slice.
 
 ## 1. Test purpose and quality rules
 
@@ -184,8 +184,8 @@ Every contract AC appears below. The actual-result column distinguishes passing 
 | F8-AC-02 | STS-AUTHZ-04, STS-AUTHZ-05, STS-OPEN-03, STS-RECEIVE-02, STS-RECEIVE-03, STS-CARD-02, STS-CARD-04, STS-INT-01 | Pass for exercised financial-validation cases: transaction/allocation counts, balances, and summary are snapshotted and unchanged after invalid writes; ownership failures preserve both Users' transaction counts. |
 | F8-AC-03 | STS-AUTHZ-01, STS-AUTHZ-02, STS-AUTHZ-03, STS-AUTHZ-04, STS-AUTHZ-05, STS-AUTHZ-06, STS-AUTHZ-07, STS-AUTHZ-08, STS-AUTHZ-09, STS-RECEIVE-04, STS-CARD-02, STS-CARD-04, STS-VIEW-04, STS-UI-03 | Pass for API role/ownership and disabled-session cases; browser route separation remains unverified. |
 | F8-AC-04 | STS-AUTH-06, STS-SEED-04, STS-INT-03 | Pass: synthetic fixture/auth data and hashed passwords were reviewed; no credential-token/private-key patterns were found in reviewed changed paths. |
-| F8-AC-05 | This AC→STS table plus actual test/result/commit record in Issue #8 | Partial: results and tested implementation commit are recorded below and in the Issue #8 progress comment; PR/review/integration/release evidence remains pending. |
-| F8-AC-06 | Reviewed PR/issue history and project-board/checklist state before Issue #8 implementation | Pending: teammate review of the implementation PR is required; project board remains Started. |
+| F8-AC-05 | This AC→STS table plus actual test/result/commit record in Issue #8 | Partial: results and tested implementation commit are recorded below; PR #23 is open and @MadMax168 was requested for review. Review/integration/release evidence remains pending. |
+| F8-AC-06 | Reviewed PR/issue history and project-board/checklist state before Issue #8 implementation | Pending: PR #23 requests teammate review of ADR-0001/0002 and implementation; project board remains Started. |
 
 ## 6. Execution and reporting requirements
 
@@ -201,7 +201,7 @@ Every contract AC appears below. The actual-result column distinguishes passing 
 - No web/server `dev` process was started. Browser-level visual checks and full browser route journeys were not run; UI evidence is from component tests only.
 - Remaining limitations: browser-run UI/route role separation was not verified because no dev server may be started; dedicated structured log-redaction assertions are absent. The persistence test reconstructs the HTTP app handler and DB client without opening a listener or launching an app process.
 - The historical pre-implementation failing test run for each business rule was not captured in this record. Passing tests verify current behavior only and do not prove TDD-first chronology.
-- Issue #8 remains **Started**. Teammate review, reviewed merge to `staging-1`, and the separate release PR to `main` are still required.
+- PR [#23](https://github.com/ovenmakemeheat/Pockit/pull/23) is open from `feature/working-sprint1` to `staging-1`; @MadMax168 is the requested reviewer. Issue #8 and the project board remain **Started**. Teammate review, reviewed merge to `staging-1`, and the separate release PR to `main` are still required.
 
 - **Primary regression command:** `bun run test` from repository root after the database is configured and Prisma generation/migrations are ready. It runs web/server/API tests and PostgreSQL-backed database tests. Do not claim it passed if a configured database test was skipped or unavailable.
 - Run targeted package tests while developing the relevant seam, then the root suite and applicable type/build/lint checks before integration. Record exact commands, results, environment prerequisites, and tested commit in Issue #8/its PR.
