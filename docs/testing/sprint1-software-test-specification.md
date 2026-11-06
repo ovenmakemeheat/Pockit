@@ -5,7 +5,7 @@
 **Feature contract:** [Sprint 1 Feature-Level SDS](../features/sprint1-feature-contracts.md)<br>
 **Requirements:** [SRS](../requirements/srs.md), [Feature Inventory](../requirements/feature-inventory.md), [System-Level SDS](../architecture/system-level-sds.md)
 
-> **Status:** Issue #8 implementation is in progress. The final pre-commit working tree based on `a3988e0` passed the root suite (48 tests), root type/build checks (6 Turbo tasks), targeted Biome (35 changed source/config files), migration status, secret-pattern scan, and `git diff --check`; the implementation commit and PR are recorded in Issue #8 after creation. ADR-0001 and ADR-0002 still require specific teammate review in the Issue #8 PR. OQ-05 is resolved by ADR-0002. Historical pre-implementation failing output was not captured in this execution record; do not claim TDD-first evidence for those changes. Future currency/amount-limit extensions remain outside this Sprint 1 slice.
+> **Status:** Issue #8 implementation is in progress. The source tree captured in implementation commit `45a935be1d35d31afa6a00a45cb2a6fbac08263f` passed the root suite (48 tests), root type/build checks (6 Turbo tasks), targeted Biome (35 changed source/config files), migration status, secret-pattern scan, and `git diff --check`. The test-spec execution record was updated after the application checks; no application source changed after those checks. ADR-0001 and ADR-0002 still require specific teammate review in the Issue #8 PR. OQ-05 is resolved by ADR-0002. Historical pre-implementation failing output was not captured in this execution record; do not claim TDD-first evidence for those changes. Future currency/amount-limit extensions remain outside this Sprint 1 slice.
 
 ## 1. Test purpose and quality rules
 
@@ -139,9 +139,9 @@ For every failure/denial test involving a write, inspect persistent state before
 
 ## 5. Acceptance-criteria to test traceability
 
-Every contract AC appears below. The actual-result column distinguishes passing coverage from partial/missing cases and process-level evidence. All passing statuses refer to the current uncommitted Issue #8 working tree; the final tested commit, teammate-reviewed PR, and merge/release evidence must be added later.
+Every contract AC appears below. The actual-result column distinguishes passing coverage from partial/missing cases and process-level evidence. Passing statuses refer to the source tree captured in implementation commit `45a935be1d35d31afa6a00a45cb2a6fbac08263f`; teammate review and merge/release evidence remain pending.
 
-| Acceptance criterion | Planned test(s) | Actual test/result (worktree; commit pending) |
+| Acceptance criterion | Planned test(s) | Actual test/result (implementation commit `45a935b`) |
 | --- | --- | --- |
 | F1-AC-01 | STS-AUTH-01, STS-AUTH-02, STS-UI-01 | Pass: PostgreSQL-backed HTTP tests sign in seeded User/Admin identities; sign-in component test validates credential submission and dashboard navigation. |
 | F1-AC-02 | STS-AUTH-03, STS-UI-01, STS-INT-03 | Partial: invalid credentials fail without cookies and component tests show field/server errors; dedicated structured log-redaction assertions remain absent. |
@@ -184,14 +184,14 @@ Every contract AC appears below. The actual-result column distinguishes passing 
 | F8-AC-02 | STS-AUTHZ-04, STS-AUTHZ-05, STS-OPEN-03, STS-RECEIVE-02, STS-RECEIVE-03, STS-CARD-02, STS-CARD-04, STS-INT-01 | Pass for exercised financial-validation cases: transaction/allocation counts, balances, and summary are snapshotted and unchanged after invalid writes; ownership failures preserve both Users' transaction counts. |
 | F8-AC-03 | STS-AUTHZ-01, STS-AUTHZ-02, STS-AUTHZ-03, STS-AUTHZ-04, STS-AUTHZ-05, STS-AUTHZ-06, STS-AUTHZ-07, STS-AUTHZ-08, STS-AUTHZ-09, STS-RECEIVE-04, STS-CARD-02, STS-CARD-04, STS-VIEW-04, STS-UI-03 | Pass for API role/ownership and disabled-session cases; browser route separation remains unverified. |
 | F8-AC-04 | STS-AUTH-06, STS-SEED-04, STS-INT-03 | Pass: synthetic fixture/auth data and hashed passwords were reviewed; no credential-token/private-key patterns were found in reviewed changed paths. |
-| F8-AC-05 | This AC→STS table plus actual test/result/commit record in Issue #8 | Partial: current test results are recorded below and in the Issue #8 progress comment; implementation commit and PR evidence are pending. |
+| F8-AC-05 | This AC→STS table plus actual test/result/commit record in Issue #8 | Partial: results and tested implementation commit are recorded below and in the Issue #8 progress comment; PR/review/integration/release evidence remains pending. |
 | F8-AC-06 | Reviewed PR/issue history and project-board/checklist state before Issue #8 implementation | Pending: teammate review of the implementation PR is required; project board remains Started. |
 
 ## 6. Execution and reporting requirements
 
 ### Actual execution record — Issue #8 working tree
 
-- Test base: branch `feature/working-sprint1`, based on `a3988e0` (`staging-1`); final working-tree verification ran immediately before committing this implementation.
+- Tested implementation commit: `45a935be1d35d31afa6a00a45cb2a6fbac08263f` on branch `feature/working-sprint1`, based on `a3988e0` (`staging-1`). Verification ran on the exact application source tree before commit; only this execution-record document changed afterward.
 - Database: isolated disposable PostgreSQL container `pockit-issue8-final-test-db`, database `pockit_issue8_test`, host port `55439`; all four checked-in migrations applied. `prisma migrate status` reported the database schema is up to date. The container is stopped after verification; it was created only for this test run and is not shared or personal.
 - `DATABASE_URL='postgresql://pockit:pockit-test-only@127.0.0.1:55439/pockit_issue8_test?schema=public' bun run test` — **PASS: 48 tests** (API 20, server 13, web 13, PostgreSQL database 2). Prisma Client generation and every configured database test passed.
 - `VITE_SERVER_URL='http://localhost:3000' DATABASE_URL='postgresql://pockit:pockit-test-only@127.0.0.1:55439/pockit_issue8_test?schema=public' bun run check-types` — **PASS: 6 Turbo tasks**; the web production client/SSR/Nitro build completed. Existing Rolldown module-level `"use client"` bundling warnings were non-fatal.
