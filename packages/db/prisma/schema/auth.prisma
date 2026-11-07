@@ -2,12 +2,16 @@ model User {
   id            String    @id
   name          String
   email         String
+  role          String    @default("User")
+  isEnabled     Boolean   @default(true)
   emailVerified Boolean   @default(false)
   image         String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
-  accounts      Account[]
+  accounts                Account[]
+  financialAccounts       FinancialAccount[]
+  financialTransactions   FinancialTransaction[]
 
   @@unique([email])
   @@map("user")

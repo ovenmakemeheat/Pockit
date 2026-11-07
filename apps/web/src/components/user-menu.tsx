@@ -9,12 +9,14 @@ import {
   DropdownMenuTrigger,
 } from "@Pockit/ui/components/dropdown-menu";
 import { Skeleton } from "@Pockit/ui/components/skeleton";
+import { useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 
 import { authClient } from "@/lib/auth-client";
 
 export default function UserMenu() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { data: session, isPending } = authClient.useSession();
 
   if (isPending) {
@@ -38,10 +40,15 @@ export default function UserMenu() {
         <DropdownMenuGroup>
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => navigate({ to: "/dashboard" })}>
+            {session.user.role === "Administrator" ? "User access" : "Overview"}
+          </DropdownMenuItem>
           <DropdownMenuItem>{session.user.email}</DropdownMenuItem>
           <DropdownMenuItem
             variant="destructive"
-            onClick={() => {
+            onClick={async () => {
+              await queryClient.cancelQueries();
+              queryClient.clear();
               authClient.signOut({
                 fetchOptions: {
                   onSuccess: () => {
