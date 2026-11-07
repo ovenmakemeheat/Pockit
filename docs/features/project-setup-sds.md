@@ -44,7 +44,7 @@ The repository needs a clean, repeatable path to configure, start, and verify th
 
 ## Dependencies
 
-- Bun 1.3.14 and workspace dependencies installed.
+- Bun 1.4.4 and workspace dependencies installed.
 - Docker Compose or a separately provisioned disposable local PostgreSQL instance for database/migration verification.
 - Generated Varlock environment accessors and Prisma client.
 - Access to the repository, Issue #9, and PR #11 for tracking evidence.

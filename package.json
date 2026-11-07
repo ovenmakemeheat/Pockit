@@ -24,7 +24,7 @@
     "dev": "turbo run dev",
     "build": "turbo run build",
     "check-types": "turbo run check-types",
-    "test": "bun run db:generate && turbo run test --filter=web --filter=server --filter=@Pockit/api && turbo run test --filter=@Pockit/db",
+    "test": "bun run db:generate && turbo run test --concurrency=1 --filter=web --filter=server --filter=@Pockit/api && turbo run test --filter=@Pockit/db",
     "dev:web": "turbo run dev -F web --",
     "dev:server": "turbo run dev -F server --",
     "db:push": "turbo run db:push -F @Pockit/db --",
@@ -65,5 +65,5 @@
       "biome check --write"
     ]
   },
-  "packageManager": "bun@1.3.14"
+  "packageManager": "bun@1.4.4"
 }
