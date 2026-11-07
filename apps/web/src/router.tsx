@@ -2,12 +2,13 @@ import type { AppRouter } from "@Pockit/api/routers/index";
 import { QueryCache, QueryClient } from "@tanstack/react-query";
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
-import { createTRPCClient, httpBatchLink } from "@trpc/client";
+import { createTRPCClient, httpBatchLink, TRPCClientError } from "@trpc/client";
 import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import { toast } from "sonner";
 
 import Loader from "./components/loader";
 import { ENV } from "./env";
+import { authClient } from "./lib/auth-client";
 import { routeTree } from "./routeTree.gen";
 import { TRPCProvider } from "./utils/trpc";
 
@@ -23,9 +24,21 @@ function getServerUrl(url: string) {
 }
 
 function createQueryClient() {
-  return new QueryClient({
+  let queryClient: QueryClient;
+  queryClient = new QueryClient({
     queryCache: new QueryCache({
       onError: (error, query) => {
+        if (
+          error instanceof TRPCClientError &&
+          error.data?.code === "UNAUTHORIZED" &&
+          typeof window !== "undefined"
+        ) {
+          queryClient.clear();
+          void authClient.signOut().finally(() => {
+            window.location.assign("/login");
+          });
+          return;
+        }
         toast.error(error.message, {
           action: {
             label: "retry",
@@ -38,6 +51,7 @@ function createQueryClient() {
     }),
     defaultOptions: { queries: { staleTime: 60 * 1000 } },
   });
+  return queryClient;
 }
 
 const trpcClient = createTRPCClient<AppRouter>({
@@ -68,6 +82,7 @@ export const getRouter = () => {
     context: { trpc, queryClient },
     defaultPendingComponent: () => <Loader />,
     defaultNotFoundComponent: () => <div>Not Found</div>,
+    // biome-ignore lint/correctness/noComponentHookFactories: TanStack Router Wrap captures this router's QueryClient.
     Wrap: ({ children }) => (
       <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
         {children}

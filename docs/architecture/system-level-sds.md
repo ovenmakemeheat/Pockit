@@ -84,7 +84,7 @@ This is a logical model, not the final Prisma schema. Exact field types, indexes
 
 | Entity | Key information | Relationships and invariants |
 | --- | --- | --- |
-| **User** | Better Auth identity plus application role (`User` or `Administrator`) and enabled/disabled status. | One User owns many Financial Accounts and Transactions. Administrators manage platform access but are never granted finance access. Role/status changes must take effect in server authorization; disabled-session revocation timing remains OQ-05. |
+| **User** | Better Auth identity plus application role (`User` or `Administrator`) and enabled/disabled status. | One User owns many Financial Accounts and Transactions. Administrators manage platform access but are never granted finance access. Disabling a User immediately revokes all stored sessions, prevents new sessions, and denies subsequent protected requests (ADR-0002). |
 | **Financial Account** | Owner User, display name, one of the five Account types, currency, and opening-balance information where applicable. The finance entity should be named `FinancialAccount` (or an equally unambiguous name), not Better Auth's existing Prisma `Account` model. | Belongs to exactly one User. A User owns zero or more. Account type constrains where it can be used as a source, receiver, or allocation destination. |
 | **Financial Transaction** | Owner User, form (`payment/charge` or `receive money`), total amount, transaction date, selected source/receiving Account, and optional description. | Belongs to exactly one User; has one or more allocation lines. The selected Account and every allocation Account must belong to the same owner. |
 | **Allocation line** | Parent Transaction, destination/counterpart Account, exact amount, and an operation/direction where needed to distinguish transfer, borrowing, or repayment. | Belongs to one Transaction and references a Financial Account. At least one line is required; the exact sum equals the parent total. |
@@ -143,7 +143,7 @@ Use the following natural-balance effects, applying each allocation amount exact
 | Loan Given repayment allocation | Decrease the referenced Loan Given receivable. It does not create Income or Expense. |
 | Cash transfer allocation | Increase the destination Cash balance for an outgoing transfer, or decrease the source Cash balance for an incoming transfer. The counterpart effect must be equal and opposite; neither side is Income or Expense. |
 
-An income/expense summary sums only the corresponding categorized allocations over its requested scope; category spending sums Expense allocations by Expense Account. Account balance, debt/receivable, summary, and history queries must be derived from the same committed records and scoped to the current User. The SRS does not settle reporting periods or a default date range; see OQ-03 and the feature contract before adding period behavior.
+An income/expense summary sums only the corresponding categorized allocations over its requested scope; category spending sums Expense allocations by Expense Account. Account balance, debt/receivable, summary, and history queries must be derived from the same committed records and scoped to the current User. For Sprint 1, summaries are all-time totals without an implicit date filter; date-filtered reporting remains later work.
 
 ### 4.3 Atomicity and persistence
 
@@ -191,7 +191,7 @@ Represent monetary values crossing JSON/API boundaries as base-10 decimal string
 
 Enforce this matrix at backend/API boundaries for every operation, including nested IDs, filters, batch requests, and summaries. Queries must include the session-derived owner constraint; mutations must verify ownership of all records being changed or referenced. UI visibility is not authorization. Test Administrator access attempts against finance endpoints explicitly, including summary endpoints and any generic lookup.
 
-An Administrator's access-management response must be limited to platform identity/access information needed for that function. It must not join, return, or aggregate financial entities. Disabled Users must not gain protected access; when an existing session is revoked remains unresolved in SRS OQ-05.
+An Administrator's access-management response must be limited to platform identity/access information needed for that function. It must not join, return, or aggregate financial entities. Disabling a User atomically updates enabled status and deletes all persisted sessions. Better Auth session creation rejects disabled Users; with cookie session caching disabled, subsequent requests resolve the missing stored session as unauthenticated. The server also rejects a session whose current User status is disabled.
 
 ## 7. Configuration, authentication, and secret handling
 
@@ -213,7 +213,7 @@ Keep schemas/examples current when configuration changes, keep local secrets in 
 
 ### 7.2 Session lifecycle
 
-Better Auth currently uses email/password authentication with Prisma-backed PostgreSQL sessions. The browser client sends credentials with API requests. The current server configuration sets session cookies to `HttpOnly`, `Secure`, and `SameSite=None`; production must retain secure cookie protections and validate trusted origins. Login creates a server-validated session; protected requests resolve that session from request headers; logout invalidates the session using Better Auth. Exact expiration, renewal, and disabled-user revocation behavior must be documented and tested in the authentication feature contract, including any environment-specific local development cookie behavior.
+Better Auth uses email/password authentication with Prisma-backed PostgreSQL sessions. The browser client sends credentials with API requests. The current server configuration sets session cookies to `HttpOnly`, `Secure`, and `SameSite=None`; production must retain secure cookie protections and validate trusted origins. Login creates a server-validated session; protected requests resolve the stored session from request headers; logout invalidates the session using Better Auth. The configured expiry is seven days with renewal after one day. When an Administrator disables a User, the same database transaction marks the User disabled and deletes all stored sessions. A Better Auth session-create hook rejects new sessions for disabled Users, and backend protected procedures recheck enabled status. Existing browser cookies may remain until cleared/expired, but cannot authenticate after the stored sessions are deleted. There is no cookie session cache. See ADR-0002; exact cookie behavior remains subject to the auth HTTP tests.
 
 ## 8. Deployment architecture
 
@@ -239,16 +239,18 @@ This is a planned Lab 5 deployment direction, not a claim of existing cloud reso
 
 ## 9. Explicit money decisions and unresolved items
 
-These design rules satisfy the need for explicit money handling while preserving currency questions that the SRS has not approved:
+Sprint 1 decisions are recorded in [ADR-0001](../adr/0001-sprint1-money-and-date-policies.md). The ADR records the product owner's delegated currency choice and the user's report that the other selected policies were confirmed with the team/course; the PR for Issue #8 requests teammate review before merge.
 
-1. **Exact representation:** use PostgreSQL `NUMERIC` with Prisma `Decimal`, or an equivalently exact decimal representation. API and UI transport use decimal strings. JavaScript binary floating-point is prohibited for money.
-2. **Proposed precision validation (pending team/course confirmation):** each currency would have an explicitly configured supported scale. The proposed policy is to reject an amount with more fractional digits than that scale, rather than silently truncate or round it. The currency set and scale are still open (SRS OQ-01), so implementation cannot hard-code a currency scale until approved.
-3. **Proposed rounding policy (pending team/course confirmation):** do not implicitly round posted Transaction, allocation, balance, transfer, or summary values; exact arithmetic would preserve the amount. If a future derived calculation requires rounding, its mode and boundary must be specified and approved before implementation (SRS OQ-02).
-4. **Allocation equality:** compare exact decimal values, and require allocation sum = Transaction total before commit.
+1. **Sprint 1 currency:** THB only, with two fractional digits. This choice scopes the Sprint 1 demonstration and does not decide whether later releases support more currencies.
+2. **Exact representation:** API/UI money values are decimal strings. Convert to exact integer minor units for calculations and persistence; never use JavaScript binary floating-point for money. Serialize values with exactly two fractional digits.
+3. **Precision/rounding:** reject inputs with more than two fractional digits. Do not implicitly round posted Transactions, allocations, balances, or Sprint 1 summaries. Any future operation requiring rounding must specify and approve its rule first.
+4. **Allocation equality:** compare exact minor-unit integers and require allocation sum = Transaction total before commit.
 5. **Balance calculation:** derive natural balances and category totals from opening positions plus committed postings as defined in Section 4.2. Opening balances, transfers, borrowing, and loan repayments are never classified as Income or Expense.
-6. **Currency compatibility:** currency code, supported currencies, mixed-currency behavior, and any foreign-exchange feature are not defined by the current SRS. Do not add currency conversion or silently combine unlike currencies; resolve the needed behavior before a feature requires it.
+6. **Transaction date/reporting:** require an explicit `YYYY-MM-DD` date, preserve it without timezone conversion, and use all-time summaries by default with no implicit date filter. Later date filtering needs a separate contract.
+7. **Amount boundaries:** Sprint 1 values must be positive; reject repayments above Loan Taken debt and Cash outflows above available balance. No product-specific maximum amount or allocation-line limit is defined. OQ-07 remains open for any future limit.
+8. **Currency compatibility:** Sprint 1 accounts use THB only; do not add conversion or combine unlike currencies. Other currencies and cross-currency behavior remain unresolved (OQ-01).
 
-Exact decimal representation and the balance formulas are the System-Level design choices. Rejecting excess precision and disallowing implicit rounding are proposed policies, not approved System-Level choices; both remain pending team/course confirmation while SRS OQ-02 is open. Currency/scale values, display formatting, zero/negative/boundary constraints, and date/time-zone semantics remain feature-level decisions tied to SRS OQ-01, OQ-02, OQ-03, and OQ-07.
+The System-Level balance formulas, exact representation, and Sprint 1 policies are explicit; OQ-01 remains open only for currencies beyond THB, OQ-04 and OQ-06 remain unresolved, and OQ-07 remains open for any future maximum or allocation-count limit. OQ-05 is resolved by ADR-0002.
 
 ## 10. Requirement-to-design traceability
 
@@ -287,7 +289,7 @@ Existing tests provide prior art for public/protected tRPC calls, Elysia health/
 | **SDS-VAL-04** | User and Administrator permissions explicitly deny Administrator access to finance data and summaries. | Review Section 6; confirm every finance operation has a server-side role/owner boundary. |
 | **SDS-VAL-05** | Configuration and secret handling are documented without exposing credentials. | Review Section 7 against Varlock schemas and inspect repository changes for secret values. |
 | **SDS-VAL-06** | Docker/GCP deployment is persistent and correctly marked as planned Lab 5 work, not Sprint 1 cloud delivery. | Review Section 8 against Compose files and the Lab 5 deployment guide. |
-| **SDS-VAL-07** | Precision, rounding, allocation equality, and balance calculations are explicit without silently resolving open currency/date questions. | Review Section 9 against SRS BR-10 and OQ-01..OQ-03/OQ-07. |
+| **SDS-VAL-07** | Precision, rounding, date, allocation equality, and balance calculations are explicit, with remaining currency/limit questions clearly separated from Sprint 1 decisions. | Review Section 9 and ADR-0001 against SRS BR-10 and the current OQ-01..OQ-03/OQ-07 status. |
 
 This is a documentation deliverable. Application behavior is not certified by these content checks; implementation and behavior tests are owned by later feature contracts and Issue #8.
 
@@ -295,14 +297,14 @@ This is a documentation deliverable. Application behavior is not certified by th
 
 | SRS question | Design implication / resolution point |
 | --- | --- |
-| OQ-01 — currency and precision | Approve supported currency codes and scale before schema validation, formatting, or persisted values depend on them. |
-| OQ-02 — rounding and excess precision | Proposed policies are no implicit rounding and rejection beyond configured scale, pending team/course confirmation; these are not approved System-Level choices. Any derived-calculation rounding needs a separately approved rule. |
-| OQ-03 — date/time zone and default Transaction date | Decide canonical Transaction-date storage, display timezone, default date, and summary period boundary in the transaction/reporting contracts. |
+| OQ-01 — currency and precision | THB with two fractional digits is selected for Sprint 1 by Guntee under explicit delegation; teammate review is pending in Issue #8. Other currencies, conversion, and mixed-currency behavior remain open. |
+| OQ-02 — rounding and excess precision | Sprint 1 rejects values beyond two fractional digits and does not implicitly round; Guntee reports this decision confirmed with the team/course. Future rounding needs a separate rule. |
+| OQ-03 — date/time zone and default Transaction date | Sprint 1 requires explicit `YYYY-MM-DD`, no timezone conversion/default, and all-time summaries; Guntee reports confirmation with the team/course. Future filters need a separate contract. |
 | OQ-04 — correction and audit | Decide edit/delete/correction and historical audit behavior before implementing correction. |
-| OQ-05 — disabled-session revocation | Decide whether disablement invalidates existing sessions immediately and how checks/revocation are enforced. |
+| OQ-05 — disabled-session revocation | Resolved by ADR-0002: immediate persisted-session deletion, new-session rejection, and protected-request denial. Implementation and teammate review remain in Issue #8. |
 | OQ-06 — performance/browser/accessibility targets | Set measurable release targets before release acceptance. |
-| OQ-07 — amount limits and invalid values | Decide zero/negative rules, amount bounds, and allocation-count constraints before final transaction validation. |
+| OQ-07 — amount limits and invalid values | Sprint 1 rejects non-positive amounts, repayment above debt, and Cash outflow above balance; no product-specific maximum or allocation-line count is defined. Guntee reports team/course confirmation. Future limits remain open. |
 
 ## 13. Review and change control
 
-This system design is subordinate to the approved project brief and SRS. If an implementation requirement conflicts with it, record the conflict and resolve it through a reviewed feature contract or an architecture decision; do not silently expand scope. Physical schema, procedure names, route paths, responsive interaction details, exact currency configuration, and deployment manifests remain bounded implementation decisions for the relevant feature issues.
+This system design is subordinate to the approved project brief and SRS. If an implementation requirement conflicts with it, record the conflict and resolve it through a reviewed feature contract or an architecture decision; do not silently expand scope. Physical schema, procedure names, route paths, responsive interaction details, any future currency configuration, and deployment manifests remain bounded implementation decisions for the relevant feature issues.

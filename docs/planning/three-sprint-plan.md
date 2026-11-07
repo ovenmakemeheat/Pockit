@@ -34,7 +34,7 @@ Feature IDs and supporting requirement IDs below follow the feature inventory. F
 
 | Feature | Planned sprint | Supporting baseline | Dependency, decision gate, or completion note |
 | --- | --- | --- | --- |
-| **FEAT-01** Authentication and session lifecycle | Sprint 1 | FR-01, FR-02; BR-11; NFR-07 | Implement login, logout, identity, and a documented session lifecycle using seeded demo Users. Coordinate disabled-user behavior with OQ-05. |
+| **FEAT-01** Authentication and session lifecycle | Sprint 1 | FR-01, FR-02; BR-11; NFR-07 | Implement login, logout, identity, and a documented session lifecycle using seeded demo Users. Implement immediate disabled-user session revocation per ADR-0002. |
 | **FEAT-02** Server-side role and ownership controls | Sprint 1 | FR-02, FR-03; BR-08, BR-11; NFR-01, NFR-07 | Depends on FEAT-01. Let the Administrator manage platform User access (including enabling/disabling Users) while backend operations deny all financial records and summaries. |
 | **FEAT-03** Synthetic Sprint 1 demo data | Sprint 1 | FR-14; BR-01; NFR-02, NFR-05 | Seed only synthetic Users, bank/Cash and credit-card/Loan Taken Accounts, and Income/Expense categories. |
 | **FEAT-04** Opening balance and transaction date foundation | Sprint 1 | FR-05; BR-05, BR-06, BR-10; NFR-02, NFR-04, NFR-05 | Depends on FEAT-03. Keep date and money open questions visible; do not infer currency or date policy. |

@@ -1,0 +1,76 @@
+enum FinancialAccountType {
+  CASH
+  LOAN_GIVEN
+  LOAN_TAKEN
+  INCOME
+  EXPENSE
+}
+
+enum FinancialTransactionForm {
+  PAYMENT_CHARGE
+  RECEIVE_MONEY
+}
+
+enum AllocationKind {
+  EXPENSE
+  LOAN_TAKEN_REPAYMENT
+  LOAN_GIVEN_LENDING
+  TRANSFER_TO_CASH
+  INCOME
+  LOAN_GIVEN_REPAYMENT
+  LOAN_TAKEN_BORROWING
+  TRANSFER_FROM_CASH
+}
+
+model FinancialAccount {
+  id                        String                 @id @default(cuid())
+  ownerId                   String
+  owner                     User                   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  name                      String
+  type                      FinancialAccountType
+  currencyCode              String                 @default("THB")
+  openingBalanceMinorUnits  String?                @db.Text
+  createdAt                 DateTime               @default(now())
+  updatedAt                 DateTime               @updatedAt
+  sourceTransactions        FinancialTransaction[] @relation("TransactionSource")
+  allocationLines           AllocationLine[]
+
+  @@unique([id, ownerId])
+  @@index([ownerId, type])
+  @@map("financial_account")
+}
+
+model FinancialTransaction {
+  id               String                  @id @default(cuid())
+  ownerId          String
+  owner            User                    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  form             FinancialTransactionForm
+  totalMinorUnits  String                  @db.Text
+  transactionDate  DateTime                @db.Date
+  sourceAccountId  String
+  sourceAccount    FinancialAccount        @relation("TransactionSource", fields: [sourceAccountId, ownerId], references: [id, ownerId], onDelete: Restrict)
+  description      String?
+  createdAt        DateTime                @default(now())
+  allocations      AllocationLine[]
+
+  @@unique([id, ownerId])
+  @@index([ownerId, transactionDate])
+  @@index([sourceAccountId, ownerId])
+  @@map("financial_transaction")
+}
+
+model AllocationLine {
+  id               String                    @id @default(cuid())
+  ownerId          String
+  transactionId    String
+  transaction      FinancialTransaction      @relation(fields: [transactionId, ownerId], references: [id, ownerId], onDelete: Cascade)
+  accountId        String
+  account          FinancialAccount          @relation(fields: [accountId, ownerId], references: [id, ownerId], onDelete: Restrict)
+  kind             AllocationKind
+  amountMinorUnits String                    @db.Text
+  createdAt        DateTime                  @default(now())
+
+  @@index([transactionId, ownerId])
+  @@index([accountId, ownerId, kind])
+  @@map("allocation_line")
+}

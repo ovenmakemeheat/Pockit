@@ -38,6 +38,14 @@
       "cache": false,
       "interactive": true
     },
+    "db:migrate:deploy": {
+      "cache": false,
+      "interactive": false
+    },
+    "seed:demo": {
+      "cache": false,
+      "passThroughEnv": ["POCKIT_DEMO_PASSWORD"]
+    },
     "db:studio": {
       "cache": false,
       "persistent": true
