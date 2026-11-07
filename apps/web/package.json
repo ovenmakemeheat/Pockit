@@ -23,7 +23,7 @@
     "@trpc/client": "catalog:",
     "@trpc/server": "catalog:",
     "@trpc/tanstack-react-query": "^11.19.0",
-    "@varlock/vite-integration": "1.5.4",
+    "@varlock/vite-integration": "1.5.5",
     "better-auth": "catalog:",
     "lucide-react": "^1.56.0",
     "next-themes": "catalog:",
