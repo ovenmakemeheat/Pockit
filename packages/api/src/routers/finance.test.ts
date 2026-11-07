@@ -26,9 +26,12 @@ const accounts = {
   openingOnlyCash: crypto.randomUUID(),
   singleLineCard: crypto.randomUUID(),
   singleLineExpense: crypto.randomUUID(),
+  raceCash: crypto.randomUUID(),
+  raceCard: crypto.randomUUID(),
+  raceExpense: crypto.randomUUID(),
   userBBank: crypto.randomUUID(),
 };
-function caller(userId: string, role = "User") {
+function caller(userId: string, role = "User", database = db) {
   const session = {
     session: { id: `session-${userId}`, userId },
     user: {
@@ -38,7 +41,7 @@ function caller(userId: string, role = "User") {
       isEnabled: true,
     },
   } as NonNullable<Context["session"]>;
-  return appRouter.createCaller({ db, session });
+  return appRouter.createCaller({ db: database, session });
 }
 
 const userCaller = () => caller(ids.userA);
@@ -133,6 +136,24 @@ beforeAll(async () => {
         id: accounts.singleLineExpense,
         ownerId: ids.userA,
         name: "Small purchases",
+        type: "EXPENSE",
+      },
+      {
+        id: accounts.raceCash,
+        ownerId: ids.userA,
+        name: "Snapshot test Cash",
+        type: "CASH",
+      },
+      {
+        id: accounts.raceCard,
+        ownerId: ids.userA,
+        name: "Snapshot test card",
+        type: "LOAN_TAKEN",
+      },
+      {
+        id: accounts.raceExpense,
+        ownerId: ids.userA,
+        name: "Snapshot test Expense",
         type: "EXPENSE",
       },
       {
@@ -601,6 +622,143 @@ describe("Sprint 1 financial API", () => {
       BigInt(expensesAfter.replace(".", "")) -
         BigInt(expensesBefore.replace(".", "")),
     ).toBe(1003n);
+  });
+
+  it("reads a Loan Taken balance from one snapshot during concurrent postings", async () => {
+    const api = userCaller();
+    const concurrentWriterDb = createPrismaClient({
+      DATABASE_URL: databaseUrl,
+    });
+    const concurrentWriter = caller(ids.userA, "User", concurrentWriterDb);
+    await api.finance.accounts.setOpeningBalance({
+      accountId: accounts.raceCash,
+      amount: "200.00",
+    });
+    await api.finance.transactions.create({
+      form: "PAYMENT_CHARGE",
+      sourceAccountId: accounts.raceCard,
+      totalAmount: "100.00",
+      transactionDate: "2026-11-07",
+      allocations: [
+        {
+          kind: "EXPENSE",
+          accountId: accounts.raceExpense,
+          amount: "100.00",
+        },
+      ],
+    });
+
+    let releaseChargeRead!: () => void;
+    const chargeReadGate = new Promise<void>((resolve) => {
+      releaseChargeRead = resolve;
+    });
+    let chargeReadReached!: () => void;
+    const chargeRead = new Promise<void>((resolve) => {
+      chargeReadReached = resolve;
+    });
+    let releaseAllocationRead!: () => void;
+    const allocationReadGate = new Promise<void>((resolve) => {
+      releaseAllocationRead = resolve;
+    });
+    const synchronizedDatabase = db.$extends({
+      query: {
+        financialTransaction: {
+          async findMany({ args, query }) {
+            const result = await query(args);
+            if (args.where?.sourceAccountId === accounts.raceCard) {
+              chargeReadReached();
+              await chargeReadGate;
+            }
+            return result;
+          },
+        },
+        allocationLine: {
+          async findMany({ args, query }) {
+            if (args.where?.accountId === accounts.raceCard) {
+              await allocationReadGate;
+            }
+            return query(args);
+          },
+        },
+      },
+    });
+    const racingApi = appRouter.createCaller({
+      db: synchronizedDatabase as unknown as typeof db,
+      session: {
+        session: { id: `session-${ids.userA}`, userId: ids.userA },
+        user: {
+          id: ids.userA,
+          name: "Synthetic User A",
+          role: "User",
+          isEnabled: true,
+        },
+      } as NonNullable<Context["session"]>,
+    });
+    const balanceRead = racingApi.finance.accounts.get({
+      accountId: accounts.raceCard,
+    });
+    let chargeReadTimeoutId: ReturnType<typeof setTimeout> | undefined;
+    const chargeReadTimeout = new Promise<void>((_, reject) => {
+      chargeReadTimeoutId = setTimeout(
+        () => reject(new Error("Loan Taken charge query was not reached")),
+        1_000,
+      );
+    });
+    const balanceReadFinishedEarly = balanceRead.then(
+      () => {
+        throw new Error("Balance read finished before the charge query gate");
+      },
+      (error: unknown) => {
+        throw error;
+      },
+    );
+
+    try {
+      await Promise.race([
+        chargeRead,
+        chargeReadTimeout,
+        balanceReadFinishedEarly,
+      ]);
+      await concurrentWriter.finance.transactions.create({
+        form: "PAYMENT_CHARGE",
+        sourceAccountId: accounts.raceCard,
+        totalAmount: "50.00",
+        transactionDate: "2026-11-07",
+        allocations: [
+          {
+            kind: "EXPENSE",
+            accountId: accounts.raceExpense,
+            amount: "50.00",
+          },
+        ],
+      });
+      await concurrentWriter.finance.transactions.create({
+        form: "PAYMENT_CHARGE",
+        sourceAccountId: accounts.raceCash,
+        totalAmount: "150.00",
+        transactionDate: "2026-11-07",
+        allocations: [
+          {
+            kind: "LOAN_TAKEN_REPAYMENT",
+            accountId: accounts.raceCard,
+            amount: "150.00",
+          },
+        ],
+      });
+    } finally {
+      if (chargeReadTimeoutId !== undefined) {
+        clearTimeout(chargeReadTimeoutId);
+      }
+      releaseChargeRead();
+      releaseAllocationRead();
+      await concurrentWriterDb.$disconnect();
+    }
+
+    expect(await balanceRead).toMatchObject({ balance: "100.00" });
+    expect(
+      (await api.finance.accounts.get({ accountId: accounts.raceCard }))
+        .balance,
+    ).toBe("0.00");
   });
 
   it("denies unauthenticated and Administrator access to every financial read and write", async () => {
