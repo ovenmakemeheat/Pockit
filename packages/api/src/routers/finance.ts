@@ -392,31 +392,36 @@ export const financeRouter = router({
     ),
     get: userProcedure
       .input(accountLookupSchema)
-      .query(async ({ ctx, input }) => {
-        const account = await ctx.db.financialAccount.findFirst({
-          where: { id: input.accountId, ownerId: ctx.session.user.id },
-        });
-        if (!account) {
-          return missingAccount();
-        }
-        const balance =
-          account.type === "INCOME"
-            ? await categoryTotalMinorUnits(
-                ctx.db,
-                ctx.session.user.id,
-                account.id,
-                "INCOME",
-              )
-            : account.type === "EXPENSE"
-              ? await categoryTotalMinorUnits(
-                  ctx.db,
-                  ctx.session.user.id,
-                  account.id,
-                  "EXPENSE",
-                )
-              : await accountBalanceMinorUnits(ctx.db, account);
-        return serializeAccount(account, balance);
-      }),
+      .query(async ({ ctx, input }) =>
+        ctx.db.$transaction(
+          async (tx) => {
+            const account = await tx.financialAccount.findFirst({
+              where: { id: input.accountId, ownerId: ctx.session.user.id },
+            });
+            if (!account) {
+              return missingAccount();
+            }
+            const balance =
+              account.type === "INCOME"
+                ? await categoryTotalMinorUnits(
+                    tx,
+                    ctx.session.user.id,
+                    account.id,
+                    "INCOME",
+                  )
+                : account.type === "EXPENSE"
+                  ? await categoryTotalMinorUnits(
+                      tx,
+                      ctx.session.user.id,
+                      account.id,
+                      "EXPENSE",
+                    )
+                  : await accountBalanceMinorUnits(tx, account);
+            return serializeAccount(account, balance);
+          },
+          { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead },
+        ),
+      ),
     setOpeningBalance: userProcedure
       .input(openingBalanceSchema)
       .mutation(async ({ ctx, input }) => {
