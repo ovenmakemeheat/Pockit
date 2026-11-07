@@ -1,12 +1,14 @@
 # Pockit
 
-Pockit is a Bun 1.3.14 TypeScript monorepo for a personal money and expense logging system. It uses React/TanStack Start, Elysia, tRPC, Better Auth, Prisma, PostgreSQL, Tailwind/shadcn UI, Biome, and Turborepo.
+Pockit is a Bun 1.4.4 TypeScript monorepo for a personal money and expense logging system. It uses React/TanStack Start, Elysia, tRPC, Better Auth, Prisma, PostgreSQL, Tailwind/shadcn UI, Biome, and Turborepo.
 
 ## Prerequisites
 
-- Bun **1.3.14** (`bun --version`)
+- Bun **1.4.4** (`bun --version`); the repository pins this version in `.tool-versions` and `package.json`.
 - Docker with Docker Compose for the local PostgreSQL service
 - Git
+
+If you use mise, run `mise install` and verify the selected runtime with `mise exec -- bun --version`; commands can be run through `mise exec -- bun ...` if mise shims are not active in your shell. Ensure `bun --version` resolves to 1.4.4 before running workspace scripts.
 
 ## Clean-checkout setup
 
