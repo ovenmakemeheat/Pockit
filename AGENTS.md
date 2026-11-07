@@ -96,7 +96,7 @@ CI becomes mandatory in Lab 5. Before then, run and record local checks against 
 
 ## Repository and tooling
 
-This repository is a Bun 1.3.14 monorepo using TypeScript, React 19/TanStack Start, Elysia, tRPC, Better Auth, Prisma with PostgreSQL, Tailwind/shadcn UI, Biome, and Turborepo. Respect package boundaries: `apps/web`, `apps/server`, and shared `packages/{api,auth,db,ui,config}`. Prefer existing workspace patterns and dependencies over introducing another framework or duplicating shared behavior.
+This repository is a Bun 1.4.4 monorepo using TypeScript, React 19/TanStack Start, Elysia, tRPC, Better Auth, Prisma with PostgreSQL, Tailwind/shadcn UI, Biome, and Turborepo. Respect package boundaries: `apps/web`, `apps/server`, and shared `packages/{api,auth,db,ui,config}`. Prefer existing workspace patterns and dependencies over introducing another framework or duplicating shared behavior.
 
 Useful root commands currently defined:
 
