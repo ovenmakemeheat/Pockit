@@ -103,6 +103,21 @@ bun run check
 
 `bun run check` is read-only. `bun run format` applies Biome formatting changes and may modify files; inspect its diff before accepting changes.
 
+## Reproducible Sprint 1 demo
+
+Follow the local PostgreSQL and Prisma steps above through `bun run db:seed`. Use a freshly migrated disposable database with no prior demo transactions; the seed is additive and does not clear or reset existing financial data. Set a local-only `POCKIT_DEMO_PASSWORD` in `apps/server/.env` and do not publish it.
+
+Start the apps yourself with `bun run dev`, then open <http://localhost:3001> and sign in as `demo.user@pockit.test` using the local demo password. Use `2026-11-07` as the date for each transaction:
+
+1. Record an opening balance of **1,000.00 THB** for **Main bank**.
+2. Record **1,500.00 THB** of income into **Main bank**, using the **Salary** category.
+3. Record a **100.00 THB** purchase on **Credit card**, allocated **65.00 THB** to **Dining** and **35.00 THB** to **Groceries**.
+4. Repay **40.00 THB** from **Main bank** to **Credit card**.
+5. Verify the dashboard shows **2,460.00 THB** Cash, **60.00 THB** card debt, **1,500.00 THB** income, and **100.00 THB** expenses. Recent activity should show the salary, purchase, and repayment; the opening balance is not an income or expense transaction.
+6. Sign out.
+
+These values assume the fresh seeded records described above. Do not use real personal/financial records for the demo.
+
 ## Environment configuration
 
 Each app/package owns a committed `.env.schema` and safe `.env.example`. Copy the example to the same directory as `.env` for local values. Varlock generates TypeScript accessors during `bun install`; run `bun run env:generate` after editing schemas. Keep local values in ignored `.env` files or a deployment secret manager. Do not paste or commit secret values.
