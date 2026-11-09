@@ -1,0 +1,95 @@
+\subparagraph*{Actual test evidence register}
+\noindent\small Evidence keys resolve to source files and representative test cases or process artifacts.\\[-2pt]
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{1.02}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.07\textwidth}>{\raggedright\arraybackslash}p{0.86\textwidth}@{}}
+\toprule
+\textbf{Ref.} & \textbf{Actual test or process evidence} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Ref.} & \textbf{Actual test or process evidence} \\
+\midrule
+\endhead
+\midrule\multicolumn{2}{r}{\footnotesize Continued on next page} \\
+\endfoot
+\bottomrule
+\endlastfoot
+\textbf{E01} & \href{https://github.com/ovenmakemeheat/Pockit/blob/28a0093535eb36d93f3d05dc2527d30cd4ccb32a/apps/server/src/auth.test.ts}{\path{apps/server/src/auth.test.ts}}: HTTP authentication and session tests \\
+\textbf{E02} & \href{https://github.com/ovenmakemeheat/Pockit/blob/28a0093535eb36d93f3d05dc2527d30cd4ccb32a/packages/api/src/routers/finance.test.ts}{\path{packages/api/src/routers/finance.test.ts}}: finance authorization and ledger tests \\
+\textbf{E03} & \href{https://github.com/ovenmakemeheat/Pockit/blob/28a0093535eb36d93f3d05dc2527d30cd4ccb32a/packages/api/src/routers/admin.test.ts}{\path{packages/api/src/routers/admin.test.ts}}: Administrator access-management tests \\
+\textbf{E04} & \href{https://github.com/ovenmakemeheat/Pockit/blob/28a0093535eb36d93f3d05dc2527d30cd4ccb32a/apps/server/src/seed-data.test.ts}{\path{apps/server/src/seed-data.test.ts}}: synthetic seed tests \\
+\textbf{E05} & \href{https://github.com/ovenmakemeheat/Pockit/blob/28a0093535eb36d93f3d05dc2527d30cd4ccb32a/packages/api/src/finance/value.test.ts}{\path{packages/api/src/finance/value.test.ts}}: exact-money and date validation tests \\
+\textbf{E06} & \href{https://github.com/ovenmakemeheat/Pockit/blob/28a0093535eb36d93f3d05dc2527d30cd4ccb32a/packages/api/src/routers/finance.test.ts}{\path{packages/api/src/routers/finance.test.ts}}: database-backed finance journey and rejection tests \\
+\textbf{E07} & \href{https://github.com/ovenmakemeheat/Pockit/blob/28a0093535eb36d93f3d05dc2527d30cd4ccb32a/apps/server/src/finance-persistence.test.ts}{\path{apps/server/src/finance-persistence.test.ts}}: fresh-client persistence test \\
+\textbf{E08} & \href{https://github.com/ovenmakemeheat/Pockit/blob/28a0093535eb36d93f3d05dc2527d30cd4ccb32a/apps/web/src/components/finance-dashboard.test.tsx}{\path{apps/web/src/components/finance-dashboard.test.tsx}}: finance UI component tests \\
+\textbf{E09} & \href{https://github.com/ovenmakemeheat/Pockit/blob/28a0093535eb36d93f3d05dc2527d30cd4ccb32a/apps/web/src/components/sign-in-form.test.tsx}{\path{apps/web/src/components/sign-in-form.test.tsx}}: login UI tests \\
+\textbf{E10} & \href{https://github.com/ovenmakemeheat/Pockit/blob/28a0093535eb36d93f3d05dc2527d30cd4ccb32a/apps/web/src/components/admin-user-management.test.tsx}{\path{apps/web/src/components/admin-user-management.test.tsx}}: Administrator UI test \\
+\textbf{E11} & \href{https://github.com/ovenmakemeheat/Pockit/blob/28a0093535eb36d93f3d05dc2527d30cd4ccb32a/apps/web/src/utils/user-scoped-query-key.test.ts}{\path{apps/web/src/utils/user-scoped-query-key.test.ts}}: cross-User cache isolation test \\
+\textbf{E12} & \href{https://github.com/ovenmakemeheat/Pockit/blob/feature/working-sprint1/docs/testing/sprint1-software-test-specification.md}{\path{docs/testing/sprint1-software-test-specification.md}}: full AC/test mapping and execution record \\
+\textbf{E13} & \href{https://github.com/ovenmakemeheat/Pockit/issues/5}{Issue \#5}; \href{https://github.com/ovenmakemeheat/Pockit/issues/7}{Issue \#7}; \href{https://github.com/ovenmakemeheat/Pockit/issues/8}{Issue \#8}; \href{https://github.com/ovenmakemeheat/Pockit/pull/20}{PR \#20}; \href{https://github.com/ovenmakemeheat/Pockit/pull/22}{PR \#22}; \href{https://github.com/ovenmakemeheat/Pockit/pull/27}{PR \#27}: review, integration, release, and board links \\
+\end{longtable}
+\medskip
+\noindent\small All 43 stable criteria are retained. Evidence keys resolve above; outcomes follow the recorded STS result.\par
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{1.04}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.085\textwidth}>{\raggedright\arraybackslash}p{0.46\textwidth}>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}p{0.12\textwidth}@{}}
+\toprule
+\textbf{AC} & \textbf{Planned STS IDs} & \textbf{Actual evidence ref.} & \textbf{Result} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{AC} & \textbf{Planned STS IDs} & \textbf{Actual evidence ref.} & \textbf{Result} \\
+\midrule
+\endhead
+\midrule\multicolumn{4}{r}{\footnotesize Continued on next page} \\
+\endfoot
+\bottomrule
+\endlastfoot
+\mbox{F1-AC-01} & \mbox{STS-AUTH-01}, \mbox{STS-AUTH-02}, \mbox{STS-UI-01} & E01, E09 & PASS \\
+\mbox{F1-AC-02} & \mbox{STS-AUTH-03}, \mbox{STS-UI-01}, \mbox{STS-INT-03} & E01, E09, E02, E04 & PARTIAL \\
+\mbox{F1-AC-03} & \mbox{STS-AUTH-01}, \mbox{STS-AUTH-05}, \mbox{STS-AUTH-10} & E01 & PASS \\
+\mbox{F1-AC-04} & \mbox{STS-AUTH-04} & E01 & PASS \\
+\mbox{F1-AC-05} & \mbox{STS-AUTH-06}, \mbox{STS-AUTH-09} & E01 & PASS \\
+\mbox{F1-AC-06} & \mbox{STS-AUTH-07}, \mbox{STS-AUTH-08}, \mbox{STS-AUTH-11} & E01 & PASS \\
+\mbox{F2-AC-01} & \mbox{STS-AUTHZ-02} & E02 & PASS \\
+\mbox{F2-AC-02} & \mbox{STS-AUTHZ-03}, \mbox{STS-AUTHZ-04}, \mbox{STS-AUTHZ-05}, \mbox{STS-INT-03} & E02, E01, E04 & PASS \\
+\mbox{F2-AC-03} & \mbox{STS-AUTHZ-07}, \mbox{STS-UI-03} & E03, E10 & PARTIAL \\
+\mbox{F2-AC-04} & \mbox{STS-AUTHZ-01}, \mbox{STS-AUTHZ-06} & E02, E03 & PASS \\
+\mbox{F2-AC-05} & \mbox{STS-AUTHZ-08}, \mbox{STS-UI-03} & E02, E03, E10 & PARTIAL \\
+\mbox{F2-AC-06} & \mbox{STS-AUTH-07}, \mbox{STS-AUTH-08}, \mbox{STS-AUTHZ-09}, \mbox{STS-AUTH-11} & E01, E03 & PASS \\
+\mbox{F3-AC-01} & \mbox{STS-SEED-01} & E04 & PASS \\
+\mbox{F3-AC-02} & \mbox{STS-SEED-02} & E04 & PASS \\
+\mbox{F3-AC-03} & \mbox{STS-SEED-03} & E04 & PASS \\
+\mbox{F3-AC-04} & \mbox{STS-SEED-04}, \mbox{STS-INT-03} & E04, E01, E02 & PASS \\
+\mbox{F3-AC-05} & \mbox{STS-AUTHZ-07}, \mbox{STS-AUTHZ-08} & E03, E02 & PASS \\
+\mbox{F4-AC-01} & \mbox{STS-OPEN-01} & E06 & PASS \\
+\mbox{F4-AC-02} & \mbox{STS-OPEN-02} & E06 & PASS \\
+\mbox{F4-AC-03} & \mbox{STS-OPEN-03} & E02, E06 & PASS \\
+\mbox{F4-AC-04} & \mbox{STS-OPEN-04} & E05 & PASS \\
+\mbox{F4-AC-05} & \mbox{STS-OPEN-05}, \mbox{STS-OPEN-06}, \mbox{STS-INT-02} & E05, E06 & PASS \\
+\mbox{F5-AC-01} & \mbox{STS-RECEIVE-01}, \mbox{STS-RECEIVE-05} & E06, E05 & PASS \\
+\mbox{F5-AC-02} & \mbox{STS-RECEIVE-01}, \mbox{STS-RECEIVE-06} & E06, E07 & PASS \\
+\mbox{F5-AC-03} & \mbox{STS-RECEIVE-02}, \mbox{STS-RECEIVE-03}, \mbox{STS-RECEIVE-05} & E06, E05 & PASS \\
+\mbox{F5-AC-04} & \mbox{STS-RECEIVE-04}, \mbox{STS-AUTHZ-05} & E02, E06 & PASS \\
+\mbox{F5-AC-05} & \mbox{STS-RECEIVE-01}, \mbox{STS-VIEW-02} & E06, E08 & PASS \\
+\mbox{F6-AC-01} & \mbox{STS-CARD-07}, \mbox{STS-CARD-01}, \mbox{STS-INT-02} & E06, E08, E05 & PASS \\
+\mbox{F6-AC-02} & \mbox{STS-CARD-03} & E06 & PASS \\
+\mbox{F6-AC-03} & \mbox{STS-CARD-01}, \mbox{STS-CARD-03}, \mbox{STS-CARD-05}, \mbox{STS-CARD-07} & E06, E08, E07 & PASS \\
+\mbox{F6-AC-04} & \mbox{STS-CARD-02}, \mbox{STS-CARD-04}, \mbox{STS-CARD-06} & E06, E02 & PASS \\
+\mbox{F6-AC-05} & \mbox{STS-CARD-01}, \mbox{STS-CARD-03}, \mbox{STS-CARD-05}, \mbox{STS-VIEW-02} & E06, E08, E07 & PASS \\
+\mbox{F7-AC-01} & \mbox{STS-CARD-05}, \mbox{STS-VIEW-01}, \mbox{STS-UI-02} & E06, E07, E08 & PASS \\
+\mbox{F7-AC-02} & \mbox{STS-CARD-05}, \mbox{STS-VIEW-02}, \mbox{STS-VIEW-03}, \mbox{STS-UI-02} & E06, E07, E08 & PASS \\
+\mbox{F7-AC-03} & \mbox{STS-OPEN-04}, \mbox{STS-VIEW-03}, \mbox{STS-VIEW-04}, \mbox{STS-UI-02}, \mbox{STS-UI-04} & E05, E06, E08, E02, E11 & PASS \\
+\mbox{F7-AC-04} & \mbox{STS-RECEIVE-06}, \mbox{STS-VIEW-05}, \mbox{STS-UI-02} & E07, E08 & PASS \\
+\mbox{F7-AC-05} & \mbox{STS-OPEN-04}, \mbox{STS-OPEN-05}, \mbox{STS-VIEW-02}, \mbox{STS-VIEW-06}, \mbox{STS-UI-02} & E05, E06, E08 & PASS \\
+\mbox{F8-AC-01} & \mbox{STS-OPEN-05}, \mbox{STS-RECEIVE-01}, \mbox{STS-CARD-01}, \mbox{STS-CARD-03}, \mbox{STS-CARD-05}, \mbox{STS-CARD-07}, \mbox{STS-VIEW-01}, \mbox{STS-INT-02} & E05, E06, E08, E07 & PASS \\
+\mbox{F8-AC-02} & \mbox{STS-AUTHZ-04}, \mbox{STS-AUTHZ-05}, \mbox{STS-OPEN-03}, \mbox{STS-RECEIVE-02}, \mbox{STS-RECEIVE-03}, \mbox{STS-CARD-02}, \mbox{STS-CARD-04}, \mbox{STS-INT-01} & E02, E06 & PASS \\
+\mbox{F8-AC-03} & \mbox{STS-AUTHZ-01}, \mbox{STS-AUTHZ-02}, \mbox{STS-AUTHZ-03}, \mbox{STS-AUTHZ-04}, \mbox{STS-AUTHZ-05}, \mbox{STS-AUTHZ-06}, \mbox{STS-AUTHZ-07}, \mbox{STS-AUTHZ-08}, \mbox{STS-AUTHZ-09}, \mbox{STS-AUTH-11}, \mbox{STS-RECEIVE-04}, \mbox{STS-CARD-02}, \mbox{STS-CARD-04}, \mbox{STS-VIEW-04}, \mbox{STS-UI-03}, \mbox{STS-UI-04} & E02, E03, E01, E06, E10, E11 & PASS \\
+\mbox{F8-AC-04} & \mbox{STS-AUTH-06}, \mbox{STS-SEED-04}, \mbox{STS-INT-03} & E01, E04, E02 & PASS \\
+\mbox{F8-AC-05} & This AC→STS table plus actual test/\allowbreak{}result/\allowbreak{}commit record in Issue \#8 & E12 & PARTIAL \\
+\mbox{F8-AC-06} & Reviewed PR/\allowbreak{}issue history and project-board/\allowbreak{}checklist state before Issue \#8 implementation & E13 & PARTIAL \\
+\end{longtable}
+\normalsize
+\setlength{\tabcolsep}{6pt}
+\renewcommand{\arraystretch}{1.15}

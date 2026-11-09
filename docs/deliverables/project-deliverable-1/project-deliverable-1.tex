@@ -1,0 +1,350 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[margin=16mm,headheight=20pt]{geometry}
+\usepackage{fontspec}
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{Latin Modern Roman}
+\IfFontExistsTF{Raleway}{\setsansfont{Raleway}}{\setsansfont{Verdana}}
+\usepackage{microtype}
+\usepackage{titlesec}
+\usepackage{array,booktabs,longtable,tabularx,enumitem}
+\usepackage{listings}
+\usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,shapes.geometric}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{url}
+
+\definecolor{PockitNavy}{HTML}{16324F}
+\definecolor{PockitBlue}{HTML}{2C6E9B}
+\definecolor{PockitTeal}{HTML}{168A83}
+\definecolor{PockitMuted}{HTML}{536273}
+\definecolor{PockitLight}{HTML}{EEF4F8}
+\definecolor{PockitWarn}{HTML}{8A3B12}
+\definecolor{PockitWarnBg}{HTML}{FFF2E8}
+\definecolor{PockitCodeBg}{HTML}{F4F6F8}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=PockitBlue,
+  urlcolor=PockitBlue,
+  citecolor=PockitBlue,
+  pdftitle={Pockit, CPE 334 Project Deliverable 1},
+  pdfauthor={Guntee Doungmanee; Polwarit Watthanahemmarat},
+  pdfsubject={Theme 7: Personal Money and Expense Logging System}
+}
+\urlstyle{same}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2pt}
+\setlength{\emergencystretch}{2em}
+\setlength{\headheight}{20pt}
+\setlength{\LTpre}{2pt}
+\setlength{\LTpost}{4pt}
+\renewcommand{\arraystretch}{1.08}
+\setlist[itemize]{leftmargin=*,itemsep=1pt,topsep=2pt}
+\setlist[enumerate]{leftmargin=*,itemsep=1pt,topsep=2pt}
+\titleformat{\section}{\Large\sffamily\bfseries\color{PockitNavy}}{\thesection}{0.65em}{}
+\titleformat{\subsection}{\large\sffamily\bfseries\color{PockitBlue}}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\normalsize\sffamily\bfseries\color{PockitNavy}}{\thesubsubsection}{0.5em}{}
+\titleformat{\paragraph}[block]{\normalsize\sffamily\bfseries\color{PockitTeal}}{}{0pt}{}
+\titleformat{\subparagraph}[block]{\small\sffamily\bfseries\color{PockitMuted}}{}{0pt}{}
+\titlespacing*{\section}{0pt}{9pt}{4pt}
+\titlespacing*{\subsection}{0pt}{7pt}{3pt}
+\titlespacing*{\subsubsection}{0pt}{5pt}{2pt}
+\titlespacing*{\paragraph}{0pt}{4pt}{1pt}
+\titlespacing*{\subparagraph}{0pt}{3pt}{1pt}
+\setcounter{tocdepth}{2}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\lstset{
+  basicstyle=\ttfamily\scriptsize,
+  breaklines=true,
+  breakatwhitespace=false,
+  columns=fullflexible,
+  keepspaces=true,
+  frame=single,
+  rulecolor=\color{PockitMuted!35},
+  backgroundcolor=\color{PockitCodeBg},
+  showstringspaces=false,
+  upquote=true,
+  xleftmargin=3pt,
+  xrightmargin=3pt,
+  aboveskip=5pt,
+  belowskip=6pt
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\sffamily\small Pockit | CPE 334}
+\rhead{\sffamily\small Project Deliverable 1}
+\cfoot{\sffamily\small\thepage}
+\renewcommand{\headrulewidth}{0.35pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{PockitTeal}\leaders\hrule height \headrulewidth\hfill}}
+
+\newcommand{\navrow}[3]{\hyperref[part:#1:start]{#2} & \pageref{part:#1:start}--\pageref{part:#1:end} & #3 \\\midrule}
+\newcommand{\IssueLink}[1]{\href{https://github.com/ovenmakemeheat/Pockit/issues/#1}{Issue \##1}}
+\newcommand{\PRLink}[1]{\href{https://github.com/ovenmakemeheat/Pockit/pull/#1}{PR \##1}}
+\newcommand{\UserLink}[2]{\href{https://github.com/#1}{#2}}
+\newcommand{\BranchLink}[1]{\href{https://github.com/ovenmakemeheat/Pockit/tree/#1}{\path{#1}}}
+\newcommand{\ContractBranchLink}{\href{https://github.com/ovenmakemeheat/Pockit/tree/docs/sprint1-engineering-contracts}{\texttt{docs/}}\allowbreak{}\href{https://github.com/ovenmakemeheat/Pockit/tree/docs/sprint1-engineering-contracts}{\texttt{sprint1-}}\allowbreak{}\href{https://github.com/ovenmakemeheat/Pockit/tree/docs/sprint1-engineering-contracts}{\texttt{engineering-contracts}}}
+\newcommand{\BoardLink}{\href{https://github.com/users/ovenmakemeheat/projects/5}{Sprint 1 project board}}
+\newcommand{\ReleaseTagLink}{\href{https://github.com/ovenmakemeheat/Pockit/releases/tag/sprint1-v1.0.0}{\texttt{sprint1-v1.0.0}}}
+\newcommand{\ReleaseCommitLink}{\href{https://github.com/ovenmakemeheat/Pockit/commit/e99da77c8181a97a32abfddc37b116ff297acf27}{\texttt{e99da77c\allowbreak{}8181a97a\allowbreak{}32abfddc\allowbreak{}37b116ff\allowbreak{}297acf27}}}
+\newcommand{\TestCommitLink}{\href{https://github.com/ovenmakemeheat/Pockit/commit/d5abf73deae8a108364d51cf766a65c26b0759b6}{\texttt{d5abf73d\allowbreak{}eae8a108\allowbreak{}364d51cf\allowbreak{}766a65c2\allowbreak{}6b0759b6}}}
+\newcommand{\CommitLink}[2]{\href{https://github.com/ovenmakemeheat/Pockit/commit/#1}{\texttt{#2}}}
+\newcommand{\TestFileLink}[1]{\href{https://github.com/ovenmakemeheat/Pockit/blob/d5abf73deae8a108364d51cf766a65c26b0759b6/#1}{\path{#1}}}
+\newcommand{\MainFileLink}[2]{\href{https://github.com/ovenmakemeheat/Pockit/blob/main/#1}{#2}}
+\newcommand{\PartLink}[2]{\hyperref[part:#1:start]{#2}}
+\newcommand{\evidencecapture}[5]{%
+  \clearpage
+  \begin{tcolorbox}[colback=white,colframe=PockitBlue,boxrule=0.8pt,title={#1},fonttitle=\sffamily\bfseries]
+    Acceptance criteria: #2\par\smallskip
+    \begin{center}
+      \includegraphics[width=0.98\linewidth,height=180mm,keepaspectratio]{#3}
+    \end{center}
+    #4\par\smallskip
+    Automated tests: #5
+  \end{tcolorbox}
+}
+
+\begin{document}
+\begin{titlepage}
+  \thispagestyle{empty}
+  \vspace*{12mm}
+  {\color{PockitTeal}\rule{\linewidth}{2pt}}\par
+  \vspace{18mm}
+  {\sffamily\color{PockitNavy}\Huge\bfseries Pockit\par}
+  \vspace{3mm}
+  {\sffamily\color{PockitBlue}\LARGE CPE 334, Project Deliverable 1\par}
+  \vspace{2mm}
+  {\Large Engineering baseline and Sprint 1 results\par}
+  \vspace{8mm}
+  {\large Theme 7: Personal Money and Expense Logging System\par}
+  \vspace{12mm}
+  \begin{tcolorbox}[colback=PockitLight,colframe=PockitTeal,title={Ready for final team review},fonttitle=\sffamily\bfseries]
+    This self-contained report includes Parts A to F, stable IDs, test and demo evidence, contribution and AI-use records, and links to detailed project history. Both students should verify the final copy before submission.
+  \end{tcolorbox}
+  \vspace{9mm}
+  \begin{tabularx}{\linewidth}{>{\bfseries}p{40mm}X}
+    Student 1 & Guntee Doungmanee, student number 67070501003, \UserLink{ovenmakemeheat}{@ovenmakemeheat} \\
+    Student 2 & Polwarit Watthanahemmarat, student number 67070501067, \UserLink{MadMax168}{@MadMax168} \\
+    Repository & \href{https://github.com/ovenmakemeheat/Pockit}{Pockit on GitHub} \\
+    Release tag & \ReleaseTagLink{} \\
+    Release commit & \ReleaseCommitLink{} on \texttt{main} \\
+    Assignment & \MainFileLink{docs/assignments/final/project_deliverable_1_v1.pdf}{Project Deliverable 1 specification} \\
+    Deadline & 8 November 2026, 23:59 \\
+  \end{tabularx}
+  \vfill
+  {\color{PockitTeal}\rule{\linewidth}{1pt}}\par
+  {\small\color{PockitMuted}Generated from the repository engineering baseline and the CPE 334 Project Deliverable 1 assignment.}
+\end{titlepage}
+
+\pagenumbering{roman}
+\tableofcontents
+\clearpage
+\section*{A to F navigation and ID map}
+\addcontentsline{toc}{section}{A to F navigation and ID map}
+\small
+\begin{longtable}{@{}p{0.30\textwidth}p{0.14\textwidth}p{0.48\textwidth}@{}}
+\toprule
+\textbf{Part} & \textbf{Pages} & \textbf{Contents / stable IDs} \\\midrule
+\navrow{A}{Part A: SRS and product scope}{FR, BR, NFR, OQ, SRS-VAL, SRS-AC}
+\navrow{B}{Part B: Feature inventory}{FEAT-01 to FEAT-14, requirement-to-feature-to-sprint matrix}
+\navrow{C}{Part C: System-level SDS}{Architecture, data model, UI/API, roles, configuration, deployment, SDS-VAL}
+\navrow{D}{Part D: Three-sprint plan}{Sprint goals, feature allocation, dependencies, gates, PLAN-VAL}
+\navrow{E}{Part E: Sprint 1 contracts}{FEAT-01 to FEAT-08, F1 to F8 ACs, STS IDs, DoD}
+\navrow{F}{Part F: Working increment and evidence}{Test results, AC-to-test mapping, issue and PR history, demo evidence, limitations}
+\bottomrule
+\end{longtable}
+\normalsize
+\noindent Page ranges come from PDF labels. Parts A to E summarize each required section and retain its stable IDs. Links open the full specifications, Issues, PRs, and source records.
+\clearpage
+\pagenumbering{arabic}
+
+\input{engineering-content.tex}
+
+\clearpage
+\section{Part F: working Sprint 1 and verification}
+\label{part:F:start}
+\noindent\textit{Release and demo records as of 8 November 2026; full-suite verification rerun on 9 November 2026.}\par\medskip
+
+\subsection{Release record}
+The report assesses \href{https://github.com/ovenmakemeheat/Pockit/tree/main}{\texttt{main}} at tag \ReleaseTagLink{}, commit \ReleaseCommitLink{}. Reviewed release \PRLink{27} merged \texttt{staging-1} to \texttt{main}. Parts \PartLink{A}{A} through \PartLink{E}{E} summarize the required specifications; Part F links test, review, and release evidence. The STS and \IssueLink{8} record tested commits and results.
+
+\subsection{Local setup}
+Follow the \MainFileLink{README.md}{README setup instructions}. Use Bun 1.4.4, Git, and Docker Compose.
+\begin{enumerate}
+  \item Install Bun 1.4.4 and run \texttt{bun\ install}. Copy the \MainFileLink{apps/server/.env.schema}{server}, \MainFileLink{apps/web/.env.schema}{web}, and \MainFileLink{packages/db/.env.schema}{database} environment schemas into ignored local files. Set \path{BETTER_AUTH_SECRET} to a random value of at least 32 characters and align the server and database \path{DATABASE_URL} values.
+  \item Start PostgreSQL with \texttt{bun\ run\ db:dev:up}. Generate Prisma Client and apply versioned migrations with \texttt{bun\ run\ db:generate} and \texttt{bun\ run\ db:migrate}. Set \path{POCKIT_DEMO_PASSWORD} only in ignored \path{apps/server/.env}, then run \texttt{bun\ run\ db:seed} to create synthetic users and hashed passwords. See the \MainFileLink{docker-compose.db.yml}{database Compose file}.
+  \item Sign in with one of the seeded accounts: \path{demo.user@pockit.test}, \path{demo.user2@pockit.test}, or \path{demo.admin@pockit.test}. Use the password set in the ignored environment file. Start the apps yourself with \texttt{bun\ run\ dev}. The web app listens on \url{http://localhost:3001}; the API listens on \url{http://localhost:3000}. The assistant did not start either app.
+  \item Point \path{DATABASE_URL} at a disposable migrated test database, then run \texttt{bun\ run\ test}. The test suite requires PostgreSQL. Run \texttt{bun\ run\ check-types}, \texttt{bun\ run\ build}, and \texttt{bun\ run\ check} for the other workspace checks.
+\end{enumerate}
+
+\subsection{Synthetic finance demonstration}
+Use the seeded primary User and synthetic accounts. Start from the seeded account state, then follow the five steps. The matching contracts appear in \PartLink{E}{Part E}; the seed test is \TestFileLink{apps/server/src/seed-data.test.ts}.
+\begin{longtable}{@{}p{0.07\textwidth}p{0.27\textwidth}p{0.56\textwidth}@{}}
+\toprule
+\textbf{Step} & \textbf{Action} & \textbf{Expected persisted outcome} \\\midrule
+1 & Set the Main bank Cash opening balance to THB 1,000.00. & Cash balance is THB 1,000.00. The opening position is not an Income or Expense Transaction. \\
+2 & Receive THB 1,500.00 salary into Main bank, dated 2026-11-01, allocated to Salary Income. & Cash is THB 2,500.00; Income total is THB 1,500.00. \\
+3 & Record a THB 100.00 Credit card purchase dated 2026-11-02, split into Dining THB 65.00 and Groceries THB 35.00. & Card debt is THB 100.00; Expense total is THB 100.00 with the two category totals preserved. \\
+4 & Repay THB 40.00 from Main bank to Credit card, dated 2026-11-03. & Cash is THB 2,460.00; card debt is THB 60.00. The repayment is not new Income/Expense. \\
+5 & Reload the financial views and retrieve history. & Persisted history contains the three dated Transactions and allocation lines; the opening position remains a baseline, not a Transaction. Expected final totals: Cash 2,460.00; card debt 60.00; Income 1,500.00; Expense 100.00; Dining 65.00; Groceries 35.00. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Required student screenshots and screen dumps}
+The assignment requires screenshots of the normal finance journey, a rejected operation, and authentication or forbidden access. The captures below use synthetic records and show no credentials. They supplement the automated tests. See the \MainFileLink{docs/assignments/final/project_deliverable_1_v1.pdf}{assignment specification}.
+
+\evidencecapture{F-1: normal finance journey and persisted result}{\PartLink{E}{FEAT-04 to FEAT-07; F4-AC-01, F5-AC-01/02, F6-AC-01/02/03, F7-AC-01 to F7-AC-04}}{evidence/f1-finance-journey.png}{The signed-in synthetic User's dashboard was reloaded before capture. It shows Cash THB 2,460.00, card debt THB 60.00, Income THB 1,500.00, Expenses THB 100.00, and Dining/Groceries totals of THB 65.00/THB 35.00. The three dated Transactions remain in history.}{The API test at \TestFileLink{packages/api/src/routers/finance.test.ts} and fresh-client test at \TestFileLink{apps/server/src/finance-persistence.test.ts} verify the persisted journey and balances.}
+
+\evidencecapture{F-2: rejected financial operation}{\PartLink{E}{FEAT-05/06; F5-AC-03, F6-AC-04, F8-AC-02}}{evidence/f2-rejected-repayment.png}{The synthetic User submitted a THB 61.00 card repayment when outstanding debt was THB 60.00. The API returned HTTP 400 with \texttt{Loan repayment cannot exceed outstanding debt}. The screenshot shows the unchanged Cash/card balances and three-Transaction history after rejection.}{The API test at \TestFileLink{packages/api/src/routers/finance.test.ts} rejects invalid transactions and confirms that transaction counts, allocations, summaries, and balances remain unchanged.}
+
+\clearpage
+\begin{tcolorbox}[colback=white,colframe=PockitBlue,boxrule=0.8pt,title={F-3: sign-out and Administrator finance denial},fonttitle=\sffamily\bfseries]
+  Acceptance criteria: \PartLink{E}{FEAT-01/02; F1-AC-01 to F1-AC-04, F1-AC-06, F2-AC-02/05}\par\smallskip
+  The first screenshot shows the login form after the synthetic User signed out. The second shows the Administrator's live request for \texttt{finance.summary.get}, which returned HTTP 403, \texttt{FORBIDDEN}, and \texttt{User role required}. The response image is cropped to those fields; it contains no credentials or finance records.
+  \begin{center}
+    \includegraphics[width=0.98\linewidth,height=110mm,keepaspectratio]{evidence/f3-signed-out-login.png}\par\smallskip
+    \includegraphics[width=0.98\linewidth,height=60mm,keepaspectratio]{evidence/f3-admin-finance-forbidden.png}
+  \end{center}
+  Automated tests at \TestFileLink{apps/server/src/auth.test.ts} cover valid/invalid credentials, current identity, and logout. Finance access tests at \TestFileLink{packages/api/src/routers/finance.test.ts} reject cross-User and Administrator access.
+\end{tcolorbox}
+\clearpage
+
+\subsection{Recorded build, test, and migration results}
+The full suite was rerun on 9 November 2026 with Bun 1.4.4 against an isolated PostgreSQL 17 database. The tested commit is \TestCommitLink{}; its Git tree matches the released tag \ReleaseTagLink{}. The temporary database used port 55441 and was removed after the run. The screenshots came from a separate student-run browser walkthrough; the assistant did not start or stop a development server.
+
+\begin{longtable}{@{}p{0.25\textwidth}p{0.40\textwidth}p{0.25\textwidth}@{}}
+\toprule
+\textbf{Check} & \textbf{Command / conditions recorded} & \textbf{Result} \\\midrule
+Full workspace tests & \texttt{DATABASE\_URL=<isolated> mise exec -- bun run test}; Bun 1.4.4, PostgreSQL 17, four migrations. & PASS: 51 total; 51 pass, 0 fail, no skipped tests reported. API 21, server 14, web 14, DB 2. \\
+Workspace type-check/build tasks & \texttt{VITE\_SERVER\_URL=http://localhost:3000 DATABASE\_URL=<disposable> bun run check-types}. & PASS: all 6 Turbo tasks; web production client/SSR/Nitro build completed. Existing Rolldown module-directive warnings were non-fatal. \\
+Direct API regression & \texttt{cd packages/api; bun test --timeout 5000}. & PASS: 21 tests in one Bun process on Bun 1.4.4; reported duration 2.80 seconds. \\
+Session-race regression & Targeted \TestFileLink{apps/server/src/auth.test.ts} against disposable PostgreSQL; full command in \PartLink{E}{Part E}. & PASS: 10 tests, 43 assertions. Without the guard, the test first found one remaining session instead of zero. \\
+Versioned migrations & \texttt{DATABASE\_URL=<isolated> mise exec -- bun run db:migrate:deploy}. & PASS: all four checked-in migrations applied to the disposable test DB. \\
+Targeted style/diff checks & Targeted Biome on changed source/config files; \texttt{git diff --check}. & PASS on recorded targeted checks. A prior project-setup baseline \texttt{bun run check} failed with pre-existing diagnostics and is not reported as a pass. \\
+\bottomrule
+\end{longtable}
+
+\noindent Full command output is retained in \path{evidence/workspace-test-output.txt}. The excerpt shows the package summaries; Bun reported no skipped tests.
+\begin{lstlisting}
+server:test:  14 pass
+server:test:  0 fail
+server:test: Ran 14 tests across 4 files. [7.03s]
+@Pockit/api:test:  21 pass
+@Pockit/api:test:  0 fail
+@Pockit/api:test: Ran 21 tests across 4 files. [1398.00ms]
+web:test:  14 pass
+web:test:  0 fail
+web:test: Ran 14 tests across 5 files. [37.32s]
+@Pockit/db:test:  2 pass
+@Pockit/db:test:  0 fail
+@Pockit/db:test: Ran 2 tests across 1 file. [238.00ms]
+\end{lstlisting}
+
+\subsection{Acceptance-criteria to actual-test crosswalk}
+The table maps all 43 acceptance criteria to planned STS IDs, actual test evidence, and results. The register links each evidence key to a test file or project record. \PartLink{E}{Part E} contains test conditions and limitations.
+\input{ac-test-results.tex}
+
+\subsection{Selected excerpts of actual automated tests}
+\textbf{Business-rule test.} This test rejects an allocation mismatch, then checks that the database state did not change. The source is \TestFileLink{packages/api/src/routers/finance.test.ts}, in the test named \emph{rejects invalid transaction inputs without changing ledger state}. The test passed in the API and root suites.
+\begin{lstlisting}
+for (const input of invalidWrites) {
+  await expectRejectedWithCode(
+    api.finance.transactions.create(input as never),
+    "BAD_REQUEST",
+  );
+}
+
+const [transactionsAfter, allocationsAfter, summaryAfter, bankAfter, cardAfter] =
+  await Promise.all([
+    db.financialTransaction.count({ where: { ownerId: ids.userA } }),
+    db.allocationLine.count({ where: { ownerId: ids.userA } }),
+    api.finance.summary.get(),
+    api.finance.accounts.get({ accountId: accounts.bank }),
+    api.finance.accounts.get({ accountId: accounts.card }),
+  ]);
+expect(transactionsAfter).toBe(transactionsBefore);
+expect(allocationsAfter).toBe(allocationsBefore);
+expect(summaryAfter).toEqual(summaryBefore);
+expect(bankAfter.balance).toBe(bankBefore.balance);
+expect(cardAfter.balance).toBe(cardBefore.balance);
+\end{lstlisting}
+
+\textbf{Ownership test.} This API test rejects a foreign User's Account lookup and an allocation to that User's Account. It confirms that neither User's transaction count changes. The source is \TestFileLink{packages/api/src/routers/finance.test.ts}, in the test named \emph{does not disclose another User account and rejects cross-owner writes}.
+\begin{lstlisting}
+await expectRejectedWithCode(
+  api.finance.accounts.get({ accountId: accounts.userBBank }),
+  "NOT_FOUND",
+);
+await expectRejectedWithCode(
+  api.finance.transactions.create({
+    form: "RECEIVE_MONEY",
+    sourceAccountId: accounts.bank,
+    totalAmount: "1.00",
+    transactionDate: "2026-11-04",
+    allocations: [
+      { kind: "INCOME", accountId: accounts.userBBank, amount: "1.00" },
+    ],
+  }),
+  "BAD_REQUEST",
+);
+expect(await db.financialTransaction.count({ where: { ownerId: ids.userA } }))
+  .toBe(countBeforeA);
+expect(await db.financialTransaction.count({ where: { ownerId: ids.userB } }))
+  .toBe(countBeforeB);
+\end{lstlisting}
+
+\subsection{Selected issue and PR evidence}
+The short history is requirements/design, reviewed Sprint 1 contracts, implementation, then a reviewed release to \texttt{main}. The linked Issues and PRs hold the full discussion and change history.
+\begin{longtable}{@{}p{0.20\textwidth}p{0.32\textwidth}p{0.42\textwidth}@{}}
+\toprule
+\textbf{Issue / PR} & \textbf{Branch and authorship} & \textbf{Substantive review / result} \\\midrule
+\IssueLink{5} / \PRLink{20} & \BranchLink{docs/system-level-sds}; \texttt{staging-1} to \texttt{staging-1}. Author: \UserLink{ovenmakemeheat}{Guntee}. & \UserLink{MadMax168}{Polwarit} reviewed architecture, data model, privacy, and deployment. Requested OQ-02's excess-precision/no-rounding policy remain proposed until confirmation. Merged. \\
+\IssueLink{7} / \PRLink{22} & \ContractBranchLink{}; \texttt{staging-1} to \texttt{staging-1}. Author: \UserLink{ovenmakemeheat}{Guntee}. & \UserLink{MadMax168}{Polwarit} reviewed FEAT-01–FEAT-08 and the STS. Requested valid one-line purchases remain allowed while the demo still splits across two categories. Merged. \\
+\IssueLink{8} / \PRLink{27} & Sprint 1 release from \texttt{staging-1} to \texttt{main}. & Reviewed by \UserLink{MadMax168}{Polwarit}; released at \ReleaseCommitLink{} and tagged \ReleaseTagLink{}. Implementation and regression PRs are linked from \IssueLink{8}. \\
+\bottomrule
+\end{longtable}
+\noindent Board status: \IssueLink{5} and \IssueLink{7} are Done; \IssueLink{8} remains Started while this report is finalized. See the \BoardLink{}.
+
+\subsection{Contribution and AI-use record}
+\begin{longtable}{@{}L{0.34\textwidth}L{0.63\textwidth}@{}}
+\toprule
+\textbf{Student} & \textbf{Repository-visible contribution} \\\midrule
+\UserLink{ovenmakemeheat}{Guntee Doungmanee}, 67070501003 & Requirements, design, implementation, tests, and report authorship. See \IssueLink{3}–\IssueLink{8} and \PRLink{18}–\PRLink{27}. \\
+\UserLink{MadMax168}{Polwarit Watthanahemmarat}, 67070501067 & Requirements/design and test review, implementation reviews, release review, and setup confirmation. See the reviews linked above. \\
+\bottomrule
+\end{longtable}
+\noindent\textbf{AI-use record.} Guntee used Pi's coding assistant, including bounded review agents, for requirements, implementation, tests, debugging, review, and report preparation. Prompts below are representative paraphrases, not a transcript. Guntee reviewed generated changes and test results; Polwarit provided independent reviews recorded in the linked PRs. The students made project decisions. AI output was not treated as test evidence.\par\medskip
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.08}
+\begin{longtable}{@{}L{0.14\textwidth}L{0.18\textwidth}L{0.40\textwidth}L{0.22\textwidth}@{}}
+\toprule
+\textbf{Use case} & \textbf{Technique} & \textbf{Representative prompt (paraphrased)} & \textbf{Human check} \\\midrule
+Requirements & Source-grounded extraction and synthesis. & ``Use Theme 7 in the assignment to draft the SRS, traceability, and sprint plan. Keep unconfirmed decisions open.'' & Compared with the assignment; reviewed through \IssueLink{3}--\IssueLink{7} and \PRLink{18}--\PRLink{22}. \\
+Code/tests & Code and test drafting, then targeted revision. & ``Implement Issue \#8's finance journey. Test persistence, invalid transactions, cross-User access, and Administrator denial.'' & Reviewed diffs and ran recorded tests; gaps remain listed in Part F and the STS. \\
+Debug/review & Error-driven diagnosis and bounded specialist review. & ``Find why the finance test stalls; verify the cause and whether the fix completes normally.'' \newline ``Review the PR for authorization and session-race defects; report actionable findings.'' & Reproduced and checked test behavior; human teammate reviews and dispositions are linked in \PRLink{23}--\PRLink{27}. \\
+Report & Scripted extraction, ID checks, LaTeX generation, and PDF inspection. & ``Condense Parts A--F into tables; preserve every stable ID, add links, and render the Mermaid diagrams.'' & Ran generator tests and LaTeX build; checked IDs, links, diagrams, screenshots, and page layout. \\
+\bottomrule
+\end{longtable}
+\normalsize
+\setlength{\tabcolsep}{6pt}
+\renewcommand{\arraystretch}{1.15}
+
+\subsection{Limitations}
+\begin{itemize}
+  \item Browser-level route/role journeys and structured log-redaction assertions were not verified. API and component tests provide the recorded evidence.
+  \item The session-race regression has a recorded pre-fix failure and post-fix pass. Pre-implementation failure output for the original financial rules was not retained, so this report does not claim test-first evidence for those changes.
+  \item The earlier full \texttt{bun run check} reported existing baseline diagnostics; only the listed targeted Biome checks passed.
+  \item OQ-01, OQ-04, OQ-06, and OQ-07 remain open as recorded in \PartLink{A}{Part A}. Docker/GCP deployment is planned for Lab 5; no cloud deployment is claimed.
+  \item Both students should confirm the contribution summary before submission.
+\end{itemize}
+
+\label{part:F:end}
+\end{document}

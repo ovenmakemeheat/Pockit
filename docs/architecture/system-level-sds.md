@@ -1,12 +1,12 @@
 # System-Level Software Design Specification — Pockit
 
 **Version:** 0.1 — Sprint 1 design baseline
-**Status:** Draft for teammate review; implementation details remain subject to feature-level contracts
+**Status:** Baseline reviewed and merged in PR #20; refined by Sprint 1 contracts in PR #22 and implementation decisions in ADR-0001/0002 and PR #23.
 **Parent:** [Issue #5 — Sprint 1: System-Level SDS](https://github.com/ovenmakemeheat/Pockit/issues/5)
 **Requirements baseline:** [Software Requirements Specification](../requirements/srs.md)
 **Project brief:** `docs/assignments/final/group_work_specs_v1.pdf`, section 6, theme 7
 
-This specification describes how the approved product scope maps to Pockit's architecture and domain model. It distinguishes existing repository capabilities from planned product behavior. It does not claim that the financial domain, role authorization, or deployment targets are already implemented.
+This specification describes how the approved product scope maps to Pockit's architecture and domain model. At the time this baseline was written, it distinguished existing repository capabilities from planned product behavior. The later Sprint 1 implementation and its verification are recorded in the feature contracts, STS, Issues/PRs, and Part F of the Deliverable 1 report.
 
 ## 1. System context and design principles
 
