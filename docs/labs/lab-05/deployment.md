@@ -9,7 +9,7 @@ connection strings, API keys, service-account keys, or other secrets here.
 | Item | Value |
 | --- | --- |
 | Repository | `https://github.com/ovenmakemeheat/Pockit` |
-| Lab 5 staging branch | `staging-2` |
+| Lab 5 staging branch | `lab5` |
 | Current Issue | [#35](https://github.com/ovenmakemeheat/Pockit/issues/35) |
 | Working branch | `codex/lab5-gcp-setup` |
 | Sprint 1 baseline commit | `e99da77` |
