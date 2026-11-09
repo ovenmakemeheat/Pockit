@@ -1,6 +1,6 @@
 # Sprint 1 Feature-Level Software Design Specifications
 
-**Version:** 0.1 — draft for teammate review before implementation<br>
+**Version:** 0.1 — accepted baseline, reviewed and merged before implementation in PR #22<br>
 **Issue:** [#7 — Sprint 1: Engineering contracts](https://github.com/ovenmakemeheat/Pockit/issues/7)<br>
 **Implementation parent:** [#8 — Sprint 1 implementation](https://github.com/ovenmakemeheat/Pockit/issues/8)<br>
 **Sources:** [SRS](../requirements/srs.md), [Feature Inventory](../requirements/feature-inventory.md), [System-Level SDS](../architecture/system-level-sds.md), [Three-Sprint Plan](../planning/three-sprint-plan.md), and Theme 7 of the approved course brief.

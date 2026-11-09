@@ -1,11 +1,11 @@
 # Software Requirements Specification: Pockit
 
 **Project:** Personal Money and Expense Logging System (CPE 334, Theme 7)<br>
-**Version:** 0.2 — Sprint 1 decision update; teammate review pending in Issue #8<br>
+**Version:** 0.2 — Sprint 1 decision update; SRS baseline reviewed in PR #18 and implementation decisions reviewed in PR #23<br>
 **Issue:** [#3 — Sprint 1: SRS and product scope](https://github.com/ovenmakemeheat/Pockit/issues/3)<br>
 **Source of truth:** `docs/assignments/final/group_work_specs_v1.pdf`, section 6, item 7; the approved project constraints in `AGENTS.md`; and the Sprint 1 acceptance scope in Issue #8.
 
-This SRS records the approved product scope and separates recorded Sprint 1 decisions from still-open questions. Requirement identifiers are stable; do not renumber them when wording changes. Add new identifiers rather than reusing retired ones. Decisions delegated by the product owner are identified as such and remain subject to the required teammate review; unresolved questions must be settled in the relevant design/feature contract before implementation depends on them.
+This SRS records the approved product scope and separates recorded Sprint 1 decisions from still-open questions. Requirement identifiers are stable; do not renumber them when wording changes. Add new identifiers rather than reusing retired ones. Decisions delegated by the product owner are identified as such, with their review status recorded in the applicable ADR and Issue #8; unresolved questions must be settled in the relevant design/feature contract before implementation depends on them.
 
 ## 1. Purpose and product scope
 
