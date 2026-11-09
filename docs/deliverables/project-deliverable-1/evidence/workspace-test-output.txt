@@ -1,0 +1,167 @@
+$ bun run db:generate && turbo run test --concurrency=1 --filter=web --filter=server --filter=@Pockit/api && turbo run test --filter=@Pockit/db
+$ turbo run db:generate -F @Pockit/db --
+
+   • turbo 2.11.10
+   • Packages in scope: @Pockit/db
+   • Running db:generate in 1 package
+   • Remote caching disabled
+
+@Pockit/db:db:generate: cache bypass, force executing a5c524bbd0b3d42c
+@Pockit/db:db:generate: $ bun ./node_modules/prisma/build/index.js generate
+@Pockit/db:db:generate: Loaded Prisma config from prisma.config.ts.
+@Pockit/db:db:generate:
+@Pockit/db:db:generate: Prisma schema loaded from prisma\schema.
+@Pockit/db:db:generate: ┌─────────────────────────────────────────────────────────┐
+@Pockit/db:db:generate: │  Update available 7.10.1 -> 8.0.0-rc.33                 │
+@Pockit/db:db:generate: │                                                         │
+@Pockit/db:db:generate: │  This is a major update - please follow the guide at    │
+@Pockit/db:db:generate: │  https://pris.ly/d/major-version-upgrade                │
+@Pockit/db:db:generate: │                                                         │
+@Pockit/db:db:generate: │  Run the following to update                            │
+@Pockit/db:db:generate: │    npm i --save-dev prisma@latest                       │
+@Pockit/db:db:generate: │    npm i @prisma/client@latest                          │
+@Pockit/db:db:generate: └─────────────────────────────────────────────────────────┘
+@Pockit/db:db:generate:
+@Pockit/db:db:generate: ✔ Generated Prisma Client (7.10.1) to .\prisma\generated in 129ms
+@Pockit/db:db:generate:
+
+ Tasks:    1 successful, 1 total
+Cached:    0 cached, 1 total
+  Time:    2.685s
+
+
+   • turbo 2.11.10
+   • Packages in scope: @Pockit/api, server, web
+   • Running test in 3 packages
+   • Remote caching disabled
+
+server:test: cache bypass, force executing 271f760e609442e3
+server:test: $ bun test
+server:test: bun test v1.4.4 (38afee6c8)
+server:test:
+server:test: src\app.test.ts:
+server:test: (pass) server HTTP app > returns the health response without starting a listener [16.81ms]
+server:test: (pass) server HTTP app > rejects unsupported authentication methods [2.11ms]
+server:test:
+server:test: src\auth.test.ts:
+server:test: (pass) authentication HTTP contract > stores a password hash rather than the submitted password [18.27ms]
+server:test: [2m2026-11-09T01:14:46.068Z[0m [31mERROR[0m [1m[Better Auth]:[0m Invalid origin: https://untrusted.example.test
+server:test: (pass) authentication HTTP contract > rejects requests from untrusted origins [37.36ms]
+server:test: (pass) authentication HTTP contract > rejects public account creation without persisting a User [10.81ms]
+server:test: [2m2026-11-09T01:14:46.980Z[0m [33mWARN[0m [1m[Better Auth]:[0m User not found
+server:test: [2m2026-11-09T01:14:47.052Z[0m [33mWARN[0m [1m[Better Auth]:[0m Invalid password
+server:test: (pass) authentication HTTP contract > rejects invalid credentials without issuing a session cookie [970.06ms]
+server:test: (pass) authentication HTTP contract > does not allow login input to elevate a User's role [127.20ms]
+server:test: (pass) authentication HTTP contract > authenticates a seeded Administrator with the server-assigned role [88.03ms]
+server:test: [2m2026-11-09T01:14:47.343Z[0m [31mERROR[0m [1m[Better Auth]:[0m Failed to create session
+server:test: (pass) authentication HTTP contract > rejects sign-in for a disabled User without issuing a session [77.91ms]
+server:test: (pass) authentication HTTP contract > authenticates a seeded User, returns session identity, and invalidates the session on logout [109.42ms]
+server:test: (pass) authentication HTTP contract > revokes a session created after User disablement wins the creation race [224.15ms]
+server:test: (pass) authentication HTTP contract > revokes an active User session immediately when an Administrator disables the User [187.90ms]
+server:test:
+server:test: src\finance-persistence.test.ts:
+server:test: (pass) financial data across server-instance recreation > serves the persisted financial journey after rebuilding the HTTP app and DB client [197.79ms]
+server:test:
+server:test: src\seed-data.test.ts:
+server:test: (pass) seeds synthetic identities and owned finance accounts idempotently [491.45ms]
+server:test:
+server:test:  14 pass
+server:test:  0 fail
+server:test:  69 expect() calls
+server:test: Ran 14 tests across 4 files. [7.03s]
+@Pockit/api:test: cache bypass, force executing b0fac0171f9a6b03
+@Pockit/api:test: $ bun test
+@Pockit/api:test: bun test v1.4.4 (38afee6c8)
+@Pockit/api:test:
+@Pockit/api:test: src\finance\value.test.ts:
+@Pockit/api:test: (pass) exact Sprint 1 money values > parses THB decimal strings into exact satang [0.29ms]
+@Pockit/api:test: (pass) exact Sprint 1 money values > rejects non-positive, malformed, or over-precision amounts without rounding [1.09ms]
+@Pockit/api:test: (pass) exact Sprint 1 money values > formats exact minor units with two fractional digits [0.16ms]
+@Pockit/api:test: (pass) explicit calendar dates > parses and formats a valid leap-day date without a timezone shift [0.30ms]
+@Pockit/api:test: (pass) explicit calendar dates > rejects invalid, missing, or timestamp-form dates [0.12ms]
+@Pockit/api:test:
+@Pockit/api:test: src\routers\admin.test.ts:
+@Pockit/api:test: (pass) Administrator user-access API > lists only identity and access fields, never financial records [9.15ms]
+@Pockit/api:test: (pass) Administrator user-access API > disables a User and revokes stored sessions atomically, then allows re-enabling [38.14ms]
+@Pockit/api:test: (pass) Administrator user-access API > rejects access-management calls from Users and unauthenticated callers [0.53ms]
+@Pockit/api:test: (pass) Administrator user-access API > does not allow the access endpoint to change an Administrator [7.92ms]
+@Pockit/api:test:
+@Pockit/api:test: src\routers\finance.test.ts:
+@Pockit/api:test: (pass) Sprint 1 financial API > persists the opening balance, salary, split card purchase, and repayment with correct totals [284.27ms]
+@Pockit/api:test: (pass) Sprint 1 financial API > keeps opening balances out of income and expense totals [100.38ms]
+@Pockit/api:test: (pass) Sprint 1 financial API > rejects invalid transaction inputs without changing ledger state [88.71ms]
+@Pockit/api:test: (pass) Sprint 1 financial API > rejects over-repayment, Cash overdraft, and opening-balance rewrites [54.30ms]
+@Pockit/api:test: (pass) Sprint 1 financial API > does not disclose another User account and rejects cross-owner writes [62.37ms]
+@Pockit/api:test: (pass) Sprint 1 financial API > accepts a one-line card purchase and sums one-cent allocations exactly [176.28ms]
+@Pockit/api:test: (pass) Sprint 1 financial API > reads a Loan Taken balance from one snapshot during concurrent postings [149.47ms]
+@Pockit/api:test: (pass) Sprint 1 financial API > denies unauthenticated and Administrator access to every financial read and write [0.94ms]
+@Pockit/api:test:
+@Pockit/api:test: src\routers\index.test.ts:
+@Pockit/api:test: (pass) API router > returns the public health result [0.19ms]
+@Pockit/api:test: (pass) API router > rejects protected data without a session [0.16ms]
+@Pockit/api:test: (pass) API router > serves protected data to an authenticated synthetic user [0.18ms]
+@Pockit/api:test: (pass) API router > enforces User and Administrator roles at the API boundary [0.57ms]
+@Pockit/api:test:
+@Pockit/api:test:  21 pass
+@Pockit/api:test:  0 fail
+@Pockit/api:test:  107 expect() calls
+@Pockit/api:test: Ran 21 tests across 4 files. [1398.00ms]
+web:test: cache bypass, force executing 17df1b34019055b4
+web:test: $ bun test
+web:test: bun test v1.4.4 (38afee6c8)
+web:test:
+web:test: src\components\admin-user-management.test.tsx:
+web:test: (pass) Administrator user access view > shows identity and access status without financial data [40.79ms]
+web:test: (pass) Administrator user access view > requests that enabled Users be disabled [108.50ms]
+web:test: (pass) Administrator user access view > offers re-enabling a disabled User [14.50ms]
+web:test:
+web:test: src\components\button.test.tsx:
+web:test: (pass) shared Button > renders an accessible button and handles activation [6.67ms]
+web:test:
+web:test: src\components\finance-dashboard.test.tsx:
+web:test: (pass) finance dashboard > renders persisted API-shaped balances, summaries, categories, and history [84.53ms]
+web:test: (pass) finance dashboard > records an explicit opening balance for the selected Cash account [90.52ms]
+web:test: (pass) finance dashboard > submits a card purchase split over two Expense categories [121.47ms]
+web:test: (pass) finance dashboard > records salary income into the selected Cash account [69.38ms]
+web:test: (pass) finance dashboard > records a card repayment from Cash without an Expense allocation [71.14ms]
+web:test: (pass) finance dashboard > keeps submit disabled when allocation amounts do not balance [95.13ms]
+web:test:
+web:test: src\components\sign-in-form.test.tsx:
+web:test: (pass) sign-in form > validates required login fields without sending invalid credentials [43.60ms]
+web:test: (pass) sign-in form > submits valid credentials and navigates to the dashboard [42.04ms]
+web:test: (pass) sign-in form > shows the authentication error returned by the server [28.26ms]
+web:test:
+web:test: src\utils\user-scoped-query-key.test.ts:
+web:test: (pass) User-scoped financial query cache > does not return one User's cached financial response to another User [2.10ms]
+web:test:
+web:test:  14 pass
+web:test:  0 fail
+web:test:  35 expect() calls
+web:test: Ran 14 tests across 5 files. [37.32s]
+
+ Tasks:    3 successful, 3 total
+Cached:    0 cached, 3 total
+  Time:    47.016s
+
+
+   • turbo 2.11.10
+   • Packages in scope: @Pockit/db
+   • Running test in 1 package
+   • Remote caching disabled
+
+@Pockit/db:test: cache bypass, force executing 72395e0d815a9d86
+@Pockit/db:test: $ varlock run -- bun test
+@Pockit/db:test: bun test v1.4.4 (38afee6c8)
+@Pockit/db:test:
+@Pockit/db:test: src\index.test.ts:
+@Pockit/db:test: (pass) PostgreSQL integration > connects to the configured database and executes a query [66.64ms]
+@Pockit/db:test: (pass) PostgreSQL integration > has applied the checked-in initial migration [6.22ms]
+@Pockit/db:test:
+@Pockit/db:test:  2 pass
+@Pockit/db:test:  0 fail
+@Pockit/db:test:  2 expect() calls
+@Pockit/db:test: Ran 2 tests across 1 file. [238.00ms]
+
+ Tasks:    1 successful, 1 total
+Cached:    0 cached, 1 total
+  Time:    1.144s

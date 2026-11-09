@@ -1,6 +1,6 @@
 # Three-Sprint Product Plan — Pockit
 
-**Version:** 0.1 — proposed for teammate and course review
+**Version:** 0.1 — roadmap reviewed and merged in PR #21; later-sprint feature placement remains proposed until team planning
 **Issue:** [#6 — Sprint 1: Three-sprint plan](https://github.com/ovenmakemeheat/Pockit/issues/6)
 **Parent:** [#2 — Sprint 1: Baseline and working increment](https://github.com/ovenmakemeheat/Pockit/issues/2)
 **Requirements:** [SRS](../requirements/srs.md)
@@ -22,7 +22,7 @@ This plan proposes a sequence and milestone strategy for delivering the approved
 
 | Sprint | Goal and exit outcome | Feature allocation | Course checkpoint |
 | --- | --- | --- | --- |
-| **Sprint 1 — required baseline** | Release a small, persistent product journey: a User records an opening bank balance, receives salary, splits a credit-card purchase across Expense categories, repays the card, and sees correct balances/history/summaries. Authentication, backend authorization, meaningful rejection, and tests are part of the journey. | FEAT-01–FEAT-07; FEAT-08 applies continuously. | Project Deliverable 1: **15 November 2026**. Sprint 1 deployment/repeatable delivery for Lab 5: **22 November 2026**. |
+| **Sprint 1 — required baseline** | Release a small, persistent product journey: a User records an opening bank balance, receives salary, splits a credit-card purchase across Expense categories, repays the card, and sees correct balances/history/summaries. Authentication, backend authorization, meaningful rejection, and tests are part of the journey. | FEAT-01–FEAT-07; FEAT-08 applies continuously. | Project Deliverable 1: **8 November 2026**. Sprint 1 deployment/repeatable delivery for Lab 5: **22 November 2026**. |
 | **Sprint 2 — complete core account and money movement** | Expand from seeded accounts and the minimum journey to the remaining approved account lifecycle, transaction allocation, and history operations. Preserve exact arithmetic, owner isolation, and atomic persistence. | FEAT-09–FEAT-12; FEAT-08 applies continuously. FEAT-12 is gated by OQ-04. | Contribute to a substantially complete product and Project Deliverable 2 by **29 November 2026**. |
 | **Sprint 3 — complete remaining user outcomes and acceptance** | Deliver private favorites and editable duplication, complete only the report/category-analysis scope approved by the team/course, and finish whole-product regression, UAT, and release readiness. | FEAT-13–FEAT-14; FEAT-08 applies continuously. FEAT-14's report detail is gated by scope clarification. | Product substantially complete by **29 November 2026**; final fixes, verification and submission preparation lead to Final Delivery on **13 December 2026**. |
 
@@ -66,7 +66,7 @@ Feature IDs and supporting requirement IDs below follow the feature inventory. F
 | **12–25 October** | Project launch, scope, workflow, engineering baseline | Use approved Issues and requirements; Project Setup #9 completed before Sprint 1 work. |
 | **26 October–1 November** | Examination period | Plan work around student exam commitments; do not use this window as assumed full team capacity. |
 | **3 and 5 November** | Midterm break/workshop: SRS, system SDS, Sprint 1 contract, tests, integration | Complete the baseline design/roadmap and prepare the Sprint 1 contract/test work. |
-| **15 November, 23:59** | Project Deliverable 1: baseline plus working Sprint 1 | Treat the database-backed minimum vertical slice and its evidence as a fixed acceptance checkpoint. |
+| **8 November, 23:59** | Project Deliverable 1: baseline plus working Sprint 1 | Treat the database-backed minimum vertical slice and its evidence as a fixed acceptance checkpoint. |
 | **22 November, 23:59** | Lab 5: deployed Sprint 1 and repeatable delivery; Lab 6 due | Reserve deployment, integration, UAT/defect handling, and evidence time; Docker/GCP work is due here, not a Sprint 1 cloud prerequisite. |
 | **29 November, 23:59** | Project Deliverable 2 and Lab 7 due; product should be substantially complete | Finish substantial feature work and keep actual requirements/test/review evidence current. |
 | **1–11 December** | Final examination period | Avoid scheduling new feature scope here; reserve this period primarily for examinations and only essential, bounded fixes/verification. |
