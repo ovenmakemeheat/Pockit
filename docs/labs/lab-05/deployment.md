@@ -10,8 +10,8 @@ connection strings, API keys, service-account keys, or other secrets here.
 | --- | --- |
 | Repository | `https://github.com/ovenmakemeheat/Pockit` |
 | Lab 5 staging branch | `lab5` |
-| Current Issue | [#35](https://github.com/ovenmakemeheat/Pockit/issues/35) |
-| Working branch | `codex/lab5-gcp-setup` |
+| Current Issue | [#34](https://github.com/ovenmakemeheat/Pockit/issues/34) |
+| Working branch | `lab5-cloud-ready` |
 | Sprint 1 baseline commit | `e99da77` |
 | GCP project ID | _To be recorded after setup_ |
 | GCP region | _To be recorded after setup_ |
@@ -29,7 +29,25 @@ Complete these fields only after checking the Google Cloud Console:
 | Alerts-only budget created | _Record budget name and threshold; hide billing details in screenshots_ |
 | Region and quota checked | _Record region and result_ |
 
-## 3. Evidence rules
+## 3. Environment variables
+
+Values below describe the variables currently declared by the repository. Local
+values belong in ignored `.env` files; deployed secret values must come from the
+GCP runtime secret/configuration mechanism.
+
+| Variable | Used by | Secret? | Purpose |
+| --- | --- | --- | --- |
+| `NODE_ENV` | Web/server/database | No | Runtime mode (`development`, `test`, or `production`). |
+| `HOST` | Server | No | Listener hostname; Cloud Run uses `0.0.0.0`. |
+| `PORT` | Server | No | Listener port supplied by the runtime; local default is `3000`. |
+| `BETTER_AUTH_SECRET` | Server/auth | Yes | Session and authentication signing secret. |
+| `BETTER_AUTH_URL` | Server/auth | No | Canonical server URL for the environment. |
+| `CORS_ORIGIN` | Server/auth | No | Trusted web origin for browser requests. |
+| `DATABASE_URL` | Server/database | Yes | PostgreSQL connection string. |
+| `POCKIT_DEMO_PASSWORD` | Server seed | Yes | Optional synthetic local demo password; never commit a real value. |
+| `VITE_SERVER_URL` | Web | No | Public server URL used by the web client. |
+
+## 4. Evidence rules
 
 - Record the exact command, result, and tested commit for repository checks.
 - Link Issues, PRs, reviews, workflow runs, and deployed revisions directly.
@@ -38,7 +56,7 @@ Complete these fields only after checking the Google Cloud Console:
 - Redact secrets and personal billing information before adding screenshots.
 - Keep this document updated at each Lab 5 lifecycle transition.
 
-## 4. Planned evidence index
+## 5. Planned evidence index
 
 | Check | Requirement | Artifact/result |
 | --- | --- | --- |
