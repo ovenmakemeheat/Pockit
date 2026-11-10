@@ -4,10 +4,11 @@ import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { createServerApp } from "./app";
 import { createContext } from "./context";
 import { ENV } from "./env.server";
-import { auth } from "./services";
+import { auth, db } from "./services";
 
 const app = createServerApp({
   corsOrigin: ENV.CORS_ORIGIN,
+  database: db,
   authHandler: (request) => auth.handler(request),
   trpcHandler: (request) =>
     fetchRequestHandler({
@@ -18,6 +19,6 @@ const app = createServerApp({
     }),
 });
 
-app.listen(3000, () => {
-  console.log("Server is running on http://localhost:3000");
+app.listen({ hostname: ENV.HOST, port: ENV.PORT }, () => {
+  console.log(`Server is running on http://${ENV.HOST}:${ENV.PORT}`);
 });
