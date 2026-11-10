@@ -93,3 +93,14 @@ down`. Remove the volume only when disposable local data may be deleted.
 | C-05 | R-04 | _Data before/after restart and redeploy_ |
 | C-06 | R-07-R-10 | _Reviewed release and running commit_ |
 
+## 7. Pull-request CI
+
+`.github/workflows/ci-docker.yml` runs for pull requests targeting `lab5` or
+`main`. The required check name is `test-and-docker`. It starts PostgreSQL,
+installs the locked Bun dependencies, generates Prisma Client, applies migrations,
+runs the automated tests, checks types, builds the workspaces, validates Compose,
+and builds the Docker images.
+
+Record the passing workflow URL, summary, and head commit in Issue #37 and in the
+final evidence index.
+
