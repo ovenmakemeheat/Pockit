@@ -1,15 +1,14 @@
 import { appRouter } from "@Pockit/api/routers/index";
-import { createPrismaClient } from "@Pockit/db";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 
 import { createServerApp } from "./app";
 import { createContext } from "./context";
 import { ENV } from "./env.server";
-import { auth } from "./services";
+import { auth, db } from "./services";
 
 const app = createServerApp({
   corsOrigin: ENV.CORS_ORIGIN,
-  database: createPrismaClient({ DATABASE_URL: ENV.DATABASE_URL }),
+  database: db,
   authHandler: (request) => auth.handler(request),
   trpcHandler: (request) =>
     fetchRequestHandler({
