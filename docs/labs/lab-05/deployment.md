@@ -47,7 +47,33 @@ GCP runtime secret/configuration mechanism.
 | `POCKIT_DEMO_PASSWORD` | Server seed | Yes | Optional synthetic local demo password; never commit a real value. |
 | `VITE_SERVER_URL` | Web | No | Public server URL used by the web client. |
 
-## 4. Evidence rules
+## 4. Local Docker workflow
+
+The full Compose stack runs PostgreSQL, the API server, and the web application.
+PostgreSQL data is stored in the named `pockit-postgres-data` volume and is not
+stored in either application container.
+
+```bash
+cp apps/server/.env.example apps/server/.env
+cp apps/web/.env.example apps/web/.env
+docker compose build
+docker compose up -d
+docker compose ps
+curl --fail http://localhost:3000/api/health
+curl --fail http://localhost:3000/api/ready
+```
+
+Apply migrations and seed synthetic local data after PostgreSQL is healthy:
+
+```bash
+docker compose run --rm server bun run db:migrate:deploy
+docker compose run --rm server bun run db:seed
+```
+
+Stop the application without deleting the database volume with `docker compose
+down`. Remove the volume only when disposable local data may be deleted.
+
+## 5. Evidence rules
 
 - Record the exact command, result, and tested commit for repository checks.
 - Link Issues, PRs, reviews, workflow runs, and deployed revisions directly.
@@ -56,7 +82,7 @@ GCP runtime secret/configuration mechanism.
 - Redact secrets and personal billing information before adding screenshots.
 - Keep this document updated at each Lab 5 lifecycle transition.
 
-## 5. Planned evidence index
+## 6. Planned evidence index
 
 | Check | Requirement | Artifact/result |
 | --- | --- | --- |
