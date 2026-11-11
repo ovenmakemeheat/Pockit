@@ -3,6 +3,8 @@ name: CI and Docker
 on:
   pull_request:
     branches: [lab5, main]
+  push:
+    branches: [main]
 
 permissions:
   contents: read
