@@ -155,3 +155,16 @@ one intentionally failing test. Record the failed workflow, the required-check
 indicator, and the disabled merge action. Close that PR without merging it and do
 not alter the released application.
 
+## 9. Release workflow
+
+`.github/workflows/deploy.yml` runs after a merge into `main` or by manual
+dispatch from `main`. It authenticates with Workload Identity Federation, builds
+API and web images tagged with the full commit SHA, pushes them to Artifact
+Registry, runs the migration job, deploys both Cloud Run services, aligns the API
+trusted origin with the web URL, and runs public health/readiness smoke checks.
+
+Required `production` environment variables are `GCP_PROJECT_ID`, `GCP_REGION`,
+`WIF_PROVIDER`, and `WIF_SERVICE_ACCOUNT`. Runtime database and authentication
+secrets remain in Secret Manager. Record the workflow URL, image tags, Cloud Run
+revisions, smoke-test result, and serving commit for Issue #40.
+
