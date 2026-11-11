@@ -17,6 +17,36 @@ connection strings, API keys, service-account keys, or other secrets here.
 | GCP region | _To be recorded after setup_ |
 | Public service URL | _To be recorded after deployment_ |
 
+## 2.1 GCP deployment plan
+
+Pockit uses separate web and API containers, so the first deployment uses two
+Cloud Run services backed by one Cloud SQL PostgreSQL instance:
+
+| Resource | Planned name | Purpose |
+| --- | --- | --- |
+| Artifact Registry repository | `pockit` | Stores immutable web and API images. |
+| Cloud SQL instance | `pockit-pg` | Persistent PostgreSQL data. |
+| Cloud Run API service | `pockit-api` | Elysia API, authentication, and tRPC. |
+| Cloud Run web service | `pockit-web` | TanStack Start UI. |
+| Secret Manager secret | `pockit-database-url` | Cloud SQL connection string. |
+| Secret Manager secret | `pockit-auth-secret` | Better Auth signing secret. |
+
+Deployment order:
+
+1. Confirm billing, budget, project, region, and IAM access.
+2. Create the Artifact Registry repository and Cloud SQL instance/database.
+3. Store the database URL and authentication secret in Secret Manager.
+4. Build and deploy the API image, then record its Cloud Run URL.
+5. Build the web image with the API URL as `VITE_SERVER_URL` and deploy it.
+6. Update API CORS/trusted-origin configuration with the web URL.
+7. Run additive migrations before accepting traffic.
+8. Verify health, readiness, authentication, the Sprint 1 financial workflow, and
+   one rejection/access restriction through the public web URL.
+
+The actual project ID, resource URLs, revisions, image digests, migration result,
+and browser evidence must be recorded after the team runs this plan in Cloud
+Shell. No GCP resource or secret is created by repository tests.
+
 ## 2. GCP setup evidence
 
 Complete these fields only after checking the Google Cloud Console:
