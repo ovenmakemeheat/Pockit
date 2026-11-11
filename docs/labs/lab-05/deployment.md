@@ -10,8 +10,8 @@ connection strings, API keys, service-account keys, or other secrets here.
 | --- | --- |
 | Repository | `https://github.com/ovenmakemeheat/Pockit` |
 | Lab 5 staging branch | `lab5` |
-| Current Issue | [#34](https://github.com/ovenmakemeheat/Pockit/issues/34) |
-| Working branch | `lab5-cloud-ready` |
+| Current Issue | [#39](https://github.com/ovenmakemeheat/Pockit/issues/39) |
+| Working branch | `lab5-merge-gate` |
 | Sprint 1 baseline commit | `e99da77` |
 | GCP project ID | _To be recorded after setup_ |
 | GCP region | _To be recorded after setup_ |
@@ -133,4 +133,25 @@ and builds the Docker images.
 
 Record the passing workflow URL, summary, and head commit in Issue #37 and in the
 final evidence index.
+
+## 8. Authentication and merge gate
+
+GitHub Actions must authenticate to GCP with Workload Identity Federation or an
+equivalent keyless mechanism. Do not download, commit, or place a service-account
+JSON key in GitHub Actions secrets. The deployment environment must be restricted
+to the `main` branch and must contain only the project, region, provider, and
+deployer-service-account identifiers; runtime secrets remain in Secret Manager.
+
+Configure the `main` branch ruleset with:
+
+- Enforcement: active.
+- Require a pull request before merging.
+- Require the `test-and-docker` status check.
+- Require branches to be up to date before merging.
+- Empty bypass list.
+
+Evidence for Issue #39 must include a normal, non-draft temporary-branch PR with
+one intentionally failing test. Record the failed workflow, the required-check
+indicator, and the disabled merge action. Close that PR without merging it and do
+not alter the released application.
 
