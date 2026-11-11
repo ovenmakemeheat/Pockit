@@ -10,8 +10,8 @@ connection strings, API keys, service-account keys, or other secrets here.
 | --- | --- |
 | Repository | `https://github.com/ovenmakemeheat/Pockit` |
 | Lab 5 staging branch | `lab5` |
-| Current Issue | [#39](https://github.com/ovenmakemeheat/Pockit/issues/39) |
-| Working branch | `lab5-merge-gate` |
+| Current Issue | [#40](https://github.com/ovenmakemeheat/Pockit/issues/40) |
+| Working branch | `lab5-deploy-workflow` |
 | Sprint 1 baseline commit | `e99da77` |
 | GCP project ID | _To be recorded after setup_ |
 | GCP region | _To be recorded after setup_ |
@@ -154,4 +154,22 @@ Evidence for Issue #39 must include a normal, non-draft temporary-branch PR with
 one intentionally failing test. Record the failed workflow, the required-check
 indicator, and the disabled merge action. Close that PR without merging it and do
 not alter the released application.
+
+## 9. Release workflow
+
+`.github/workflows/deploy.yml` runs after the `CI and Docker` workflow succeeds on
+the exact `main` commit, or by manual dispatch. It authenticates with Workload
+Identity Federation, builds API and web images tagged with the full commit SHA,
+pushes them to Artifact Registry, creates or updates the migration job with its
+explicit command and database configuration, deploys both public Cloud Run
+services with explicit container ports, aligns the API trusted origin with the
+web URL, and runs public health/readiness smoke checks.
+
+Required `production` environment variables are `GCP_PROJECT_ID`, `GCP_REGION`,
+`WIF_PROVIDER`, and `WIF_SERVICE_ACCOUNT`. The pre-provisioned runtime service
+account must be `pockit-runner@PROJECT_ID.iam.gserviceaccount.com`, and it needs
+Cloud SQL access plus access to the `pockit-database-url` and
+`pockit-auth-secret` secrets. Runtime database and authentication secrets remain
+in Secret Manager. Record the workflow URL, image tags, Cloud Run revisions,
+smoke-test result, and serving commit for Issue #40.
 
