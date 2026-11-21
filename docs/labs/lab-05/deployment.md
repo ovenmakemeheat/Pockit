@@ -16,7 +16,7 @@ connection strings, API keys, service-account keys, or other secrets here.
 | GCP project ID | `cpe-se-course-2026` (shared course project) |
 | GCP region | `asia-southeast1` |
 | Team prefix | `s4b043a2c` assigned by the course portal |
-| Reserved public service URL | `https://s4b043a2c-4d7hbszvwq-as.a.run.app` (the placeholder is present; Pockit is not deployed yet) |
+| Public service URL | `https://s4b043a2c-4d7hbszvwq-as.a.run.app` (initial Pockit revision `s4b043a2c-00002-82b`; current `s4b043a2c-lab5redeploy` serves 100% of traffic) |
 
 ## 2.1 GCP deployment plan
 
@@ -36,7 +36,7 @@ plan for the shared course environment.
 | Runtime service account | `s4b043a2c-runner@cpe-se-course-2026.iam.gserviceaccount.com` | Existing team runtime identity. |
 | Secret Manager secret | `s4b043a2c-database-url` | Portal-created database connection; value is never copied into the repo. |
 | Secret Manager secret | `s4b043a2c-app-secret-1` | Pockit's Better Auth signing secret; random value stored as version 1 on 2026-11-19 without displaying it. |
-| Secret Manager secret | `s4b043a2c-app-secret-2` | Team-chosen course User password; add a version before the first release. No version has been verified yet. |
+| Secret Manager secret | `s4b043a2c-app-secret-2` | Team-chosen course User password. The bootstrap job completed using this secret reference; its value was not read or recorded. |
 
 Deployment order:
 
@@ -66,9 +66,9 @@ portal. On 2026-11-19, the approved Google account signed in to the portal for
 team PEEEEEEJA. The portal completed all six provisioning steps. A read-only
 `gcloud sql instances describe s4b043a2c-pg --project=cpe-se-course-2026`
 returned `RUNNABLE` in `asia-southeast1`; read-only describes confirmed the
-existing service and migration job. The service still runs the portal placeholder
-image. [Issue #35](https://github.com/CPE334-Pockit/Pockit/issues/35) tracks
-team access and the centrally managed budget question. The
+existing service and migration job. At setup time the service ran the portal
+placeholder image; the first Pockit deployment is recorded below. [Issue #35](https://github.com/CPE334-Pockit/Pockit/issues/35) tracks
+team access and the course-managed cost-control decision. The
 [portal completion screenshot](artifacts/course-ready-2026-11-19.png) shows all
 six steps complete; the [resource screenshot](artifacts/course-resources-2026-11-19.png)
 shows the assigned project, region, prefix, and reserved URL without credentials.
@@ -77,9 +77,18 @@ shows the assigned project, region, prefix, and reserved URL without credentials
 | --- | --- |
 | Approved account used | Portal verified the registered Google account; no account identifier or credential recorded here. |
 | Billing or Free Trial active | Shared university project provisioned resources successfully; personal Free Trial is no longer the deployment path. |
-| Teammate added to project | Not yet independently verified; TA must add team members through the portal. |
-| Alerts-only budget created | Not verified; course credits are shared and the team cannot manage project-wide billing. Ask TA whether the course manages alerts centrally. |
+| Teammate access | Both students reported on 2026-11-21 that they can access the team resources in the intended GCP project; this is a team report, not an agent-observed second-account session. |
+| Budget alert | No team-created alert. The original personal Free Trial handout strongly recommended one, but the later course portal supplies a shared project and shared credits without a student budget setup step. The team does not claim that a central alert exists. |
 | Region and quota checked | Portal assigned `asia-southeast1` and Cloud SQL `db-f1-micro`; team-specific quotas were not independently verified. |
+
+Under the university's shared-project instructions, the team uses its one
+portal-provisioned Cloud SQL instance and existing team resources. The serving
+Cloud Run service is configured with minimum instances 0 and maximum instances
+1. The team must not create another SQL instance or modify billing for the
+shared project. The original alerts-only budget recommendation applied to a
+student-owned Free Trial project; it is not recorded as a configured control
+for this course-managed project. Course administrators can confirm whether
+they operate central billing alerts if needed.
 
 ### Course-image local verification (2026-11-19)
 
@@ -281,6 +290,15 @@ retains its exact-SHA CI gate, migration-before-service ordering, course User
 bootstrap, and public smoke checks while switching to the portal-bound `demo`
 environment. Runtime secrets remain in Secret Manager.
 
+The team later supplied a privacy-safe [portal status screenshot](artifacts/course-wif-connected-2026-11-21.png)
+showing `เชื่อม GitHub Actions (WIF) — เชื่อมแล้ว` after resource preparation.
+This verifies that the portal reports the connection as complete; it is not
+evidence that Google accepted a GitHub OIDC token. The [manual `main` deploy
+attempt 3](https://github.com/CPE334-Pockit/Pockit/actions/runs/44757614254/attempts/3)
+still failed at token exchange. The separate error screenshot and a portal
+team-information screenshot are kept in Git-ignored `artifacts/private/` for
+the TA because the latter contains a member email.
+
 Configure the `main` branch ruleset with:
 
 - Enforcement: active.
@@ -342,9 +360,10 @@ Changing secret slot 2 later does not rotate the existing account password.
 If the bootstrap job fails, the service update does not run. The local
 `db:seed` production safeguard remains in place.
 
-`.github/workflows/deploy.yml` runs after the `CI and Docker` workflow succeeds on
-the exact `main` commit, or by manual dispatch after checking a successful CI
-run for that same SHA. Once the portal GitHub connection is completed, it
+`.github/workflows/deploy.yml` starts on a push to `main` or by manual dispatch
+from `main`. Before authenticating to GCP, it waits for the `CI and Docker`
+push run on the exact release SHA to pass; a failed or missing CI result stops
+the deployment. Once the portal GitHub connection is completed, it
 authenticates without a key, builds the single course image tagged with the full
 commit SHA, pushes it to the team's existing Artifact Registry repository,
 updates and executes the existing migration job, runs the course User bootstrap,
@@ -360,9 +379,10 @@ infrastructure or changes project IAM.
    the release diff and the required CI result. Merge only after that review
    and all required checks pass. Record the release PR and merge commit SHA.
 3. Confirm `CI and Docker` passed on that exact `main` SHA. The `push: main`
-   trigger produces this run; its successful `workflow_run` triggers `deploy.yml`.
-   If a manual workflow dispatch is used, confirm its selected ref and SHA
-   correspond to the reviewed release and that CI passed for that same SHA.
+   trigger starts both CI and `deploy.yml`; the deployment waits for passing CI
+   before authenticating or changing GCP. If a manual workflow dispatch is used,
+   confirm its selected ref and SHA correspond to the reviewed release and that
+   CI passed for that same SHA.
 4. Inspect the deployment run in GitHub Actions. Record its run URL, full image
    tag/digest, migration job result, Cloud Run revision, public web/API paths
    on the same team URL, and health/readiness smoke results. Do not report a release
@@ -381,10 +401,9 @@ failed at `Validate university GitHub connection`: `WIF_PROVIDER` and
 `WIF_SERVICE_ACCOUNT` were empty in the workflow's former `production`
 environment.
 The authentication, build, migration, service update and smoke steps were all
-skipped. No Pockit image has been deployed or live revision recorded. Once the
-workflow's `demo` environment change is reviewed and merged to `main`, its
-passing CI run should trigger a fresh deploy. Ensure app secret slot 2 has the
-team-chosen course User password before that release.
+skipped. This is the historical first attempt, before the `demo` environment
+change reached `main` in [release PR #70](https://github.com/CPE334-Pockit/Pockit/pull/70).
+The later WIF attempts and first manual Pockit deployment are recorded below.
 
 For a manual deployment fallback, run
 `DRY_RUN=1 bash deploy/course-first-deploy.sh` and inspect its commands; after
@@ -394,8 +413,10 @@ course project and existing team resources, builds an amd64 image, stops if
 migrations fail, and updates only the team's existing service. This manual
 first deployment does not satisfy the GitHub Actions release criterion.
 
-The workflow uses the portal-assigned project, region, prefix, and URL. It was
-compared with the downloaded portal workflow and retains the Pockit-specific
+The workflow uses the portal-assigned project, region, prefix, and URL. The
+project and region come from the `demo` environment variables and are checked
+against the assigned team values before authentication. It was compared with
+the downloaded portal workflow and retains the Pockit-specific
 exact-SHA CI gate, migrations before traffic, one-time identity bootstrap, and
 public smoke checks. Its GitHub environment is `demo`, restricted to `main`,
 with `GCP_PROJECT_ID`, `GCP_REGION`, `WIF_PROVIDER`, `WIF_SERVICE_ACCOUNT`, and
@@ -413,4 +434,119 @@ the portal already mapped `DATABASE_URL` and attached Cloud SQL to the service
 and job. The deploy adds `BETTER_AUTH_SECRET` from app secret slot 1 without
 replacing the database mapping. Record the workflow URL, image tag/digest,
 serving revision, smoke-test result, and release commit for Issue #40.
+
+### First public Pockit deployment (2026-11-20)
+
+[Release PR #70](https://github.com/CPE334-Pockit/Pockit/pull/70) merged the
+portal `demo` environment change to `main` at full commit
+`5256b3cd7b9269dc32db5bd10abfe401bbaeb958`.
+[Main CI run 44756809917](https://github.com/CPE334-Pockit/Pockit/actions/runs/44756809917)
+passed. The [automatic deployment run 44757283437](https://github.com/CPE334-Pockit/Pockit/actions/runs/44757283437)
+and [manual dispatch run 44757614254](https://github.com/CPE334-Pockit/Pockit/actions/runs/44757614254)
+both passed exact-SHA/variable checks but failed at keyless authentication:
+`unauthorized_client: The given credential is rejected by the attribute
+condition`. The team account cannot read the course provider condition
+(`iam.workloadIdentityPoolProviders.get` denied). No GitHub Actions deployment
+has succeeded; the TA must inspect the provider's binding for this repo,
+`main`, `.github/workflows/deploy.yml`, and `demo`.
+
+On 2026-11-21 ICT, the failed manual run was retried as
+[attempt 3](https://github.com/CPE334-Pockit/Pockit/actions/runs/44757614254/attempts/3)
+on the same `main` commit. Job `136443062030` passed checkout, latest-main,
+exact-SHA CI and university variable validation, then failed at
+`Authenticate without a service-account key` with the same
+`unauthorized_client` attribute-condition rejection. No build, migration or
+Cloud Run update ran. The downloaded newer team workflow differs from
+Pockit's workflow in trigger (`push` versus `workflow_run`) and Google auth
+action version (v3 versus v2); neither difference is established as the cause.
+Send the attempt-3 job log to the TA and ask them to compare the provider
+condition with this run's OIDC claims. A reviewed follow-up on PR #71 now
+proposes the portal's `push: main` trigger and pinned v3 auth/setup actions as
+a diagnostic while retaining the exact-SHA CI gate and Pockit release steps.
+The earlier failures remain historical evidence; this change does not prove
+WIF works until a new run on `main` authenticates successfully.
+
+To verify the application while WIF is blocked, an isolated clean `main`
+worktree at the release commit ran:
+
+1. `DRY_RUN=1 bash deploy/course-first-deploy.sh` — passed; the printed
+   commands targeted only prefix `s4b043a2c` in project
+   `cpe-se-course-2026`, region `asia-southeast1`.
+2. `DRY_RUN=0 bash deploy/course-first-deploy.sh` — passed; the script
+   verified local `main` equaled `origin/main`, built and pushed the amd64
+   image, waited for migration and course User bootstrap, updated the existing
+   service, then checked health, readiness and web root.
+
+| Result | Observed evidence |
+| --- | --- |
+| Image tag | `asia-southeast1-docker.pkg.dev/cpe-se-course-2026/s4b043a2c/s4b043a2c:5256b3cd7b9269dc32db5bd10abfe401bbaeb958` |
+| Registry manifest-list digest | `sha256:5e206e635ecab27b398360265c4f0cdf955ca746ab612270ba6b5d0f77790e3b` from Docker push |
+| Migration | Execution `s4b043a2c-migrate-2vpgq`, `Completed=True` at `2026-11-20T14:59:52Z` |
+| Course User bootstrap | Execution `s4b043a2c-migrate-7gfpq`, `Completed=True` at `2026-11-20T15:00:18Z`; the job references secret `s4b043a2c-app-secret-2:latest` without exposing its value |
+| Cloud Run | Initial service `s4b043a2c` revision `s4b043a2c-00002-82b` was Ready and served 100% at `https://s4b043a2c-4d7hbszvwq-as.a.run.app` after first deployment; current `s4b043a2c-lab5redeploy` serves 100% with the same release image. |
+| Serving image | Revision digest `sha256:015061e172242f39cc28fba2a59618076ea2fb685b509cf98835700eac391eee` (selected platform manifest); service config retains full release SHA image tag |
+| Public paths | `GET /`, `/login`, `/api/health`, and `/api/ready` each returned HTTP 200. Readiness body: `{"status":"ready","db":"connected"}`. The browser home page identified Pockit. |
+| Access restriction | Unauthenticated `GET /trpc/finance.accounts.list` returned HTTP 401, `Authentication required`. |
+| Runtime secrets | Service config maps `DATABASE_URL` to `s4b043a2c-database-url:latest` and `BETTER_AUTH_SECRET` to `s4b043a2c-app-secret-1:latest`; no values were read or committed. |
+
+The team member signed in to the public dashboard as the synthetic course User
+and recorded one `Salary` receipt dated 2026-11-20, description
+`LAB5-PERSIST-20261120`, amount THB 123.45 into `Main bank`. Their screenshot
+shows the public `/dashboard` URL, the single Recent activity entry, Cash on
+hand THB 123.45 and Income THB 123.45. The original screenshot is retained
+locally at `artifacts/private/public-income-before-restart-2026-11-20.png`
+for the report because its browser chrome includes unrelated personal tabs
+and bookmarks. The `artifacts/private/` directory is Git-ignored. Together
+with the HTTP 401 finance read above, this
+verifies the public business action and access restriction in #38. The
+signed-in journey is a team-observed screenshot, not an agent-controlled trace.
+
+For the first cloud persistence step, the same reviewed image was rolled to a
+fresh application revision without touching Cloud SQL or rerunning the
+bootstrap job:
+
+`gcloud run services update s4b043a2c --image=asia-southeast1-docker.pkg.dev/cpe-se-course-2026/s4b043a2c/s4b043a2c:5256b3cd7b9269dc32db5bd10abfe401bbaeb958 --revision-suffix=lab5restart --project=cpe-se-course-2026 --region=asia-southeast1 --quiet`
+
+The command exited 0. A subsequent service describe showed revision
+`s4b043a2c-lab5restart` Ready and serving 100% of traffic with the same full
+release SHA image tag. Public `/api/ready` returned
+`{"status":"ready","db":"connected"}`. After refreshing the public
+dashboard, the team member reported that the same transaction and balance
+remained visible. No distinct screenshot was captured between the two
+rollouts; record this as a user observation plus CLI revision/readiness
+evidence.
+
+For a separate redeployment check, the same `gcloud run services update`
+command was run with `--revision-suffix=lab5redeploy`, keeping the exact
+release image tag and team service. It exited 0 and created revision
+`s4b043a2c-lab5redeploy`. Service describe showed that revision Ready and
+serving 100% of traffic with the full `5256b3cd7b9269dc32db5bd10abfe401bbaeb958`
+image tag. Public `/api/ready` again returned
+`{"status":"ready","db":"connected"}`. After refreshing the public
+dashboard again, the team member reported that the same transaction and THB
+123.45 balance remained visible. Issue #41 AC-L5-08-01/02 are checked using
+the team-observed results and the named command/revision/readiness evidence.
+The team later sent two screenshot files for the after-rollout stages. Both
+display the public `/dashboard`, the one `LAB5-PERSIST-20261120` transaction
+and THB 123.45 Cash/Income totals. File inspection showed that both have the
+same SHA-256 digest
+`3383f8ad7bb9672cea297eb3061a38d94034e2a6bfaf5db646cfd259d69c07ec`;
+they are byte-identical copies rather than distinct observations of the two
+revisions. One copy is retained locally at
+`artifacts/private/public-income-after-redeploy-2026-11-20.png` because its
+browser chrome includes unrelated personal tabs and bookmarks. Treat it as a
+post-redeployment dashboard image, paired with the service revision/readiness
+commands and the team's explicit observations. The team confirmed it has no
+separate screenshot from after the first rollout; do not caption the duplicate
+as independent after-restart evidence.
+
+Read-only revision describe recorded creation timestamps
+`2026-11-20T15:35:26.928193Z` for `s4b043a2c-lab5restart` and
+`2026-11-20T15:42:39.035745Z` for `s4b043a2c-lab5redeploy`, both Ready.
+The first before-rollout screenshot file was saved at about 22:34 ICT; the
+byte-identical after-stage files were received at 22:45 ICT, after the second
+revision existed. These file times are consistent with the team's account
+but do not replace an independent screenshot from between the rollouts.
+This manual redeployment does not substitute for the still-failing GitHub
+Actions workflow in #39/#40.
 

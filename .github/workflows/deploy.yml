@@ -1,9 +1,7 @@
 name: Deploy Pockit
 
 on:
-  workflow_run:
-    workflows: [CI and Docker]
-    types: [completed]
+  push:
     branches: [main]
   workflow_dispatch:
 
@@ -17,21 +15,20 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  PROJECT_ID: cpe-se-course-2026
-  REGION: asia-southeast1
+  PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+  REGION: ${{ vars.GCP_REGION }}
   PREFIX: s4b043a2c
   SERVICE_URL: https://s4b043a2c-4d7hbszvwq-as.a.run.app
-  RELEASE_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+  RELEASE_SHA: ${{ github.sha }}
 
 jobs:
   deploy:
-    name: deploy-${{ github.event.workflow_run.head_sha || github.sha }}
+    name: deploy-${{ github.sha }}
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     # The course WIF provider is bound to deploy.yml on main in this environment.
     environment: demo
-    if: >-
-      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
-      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' && github.event.workflow_run.head_repository.full_name == github.repository)
+    if: github.ref == 'refs/heads/main'
 
     steps:
       - name: Check out reviewed release commit
@@ -44,34 +41,48 @@ jobs:
           git fetch --quiet origin main
           test "${RELEASE_SHA}" = "$(git rev-parse origin/main)"
 
-      - name: Require passing CI on manual release SHA
-        if: github.event_name == 'workflow_dispatch'
+      - name: Require passing CI on this release SHA
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          runs="$(gh api --method GET "repos/${GITHUB_REPOSITORY}/actions/workflows/ci-docker.yml/runs" \
-            -f head_sha="${RELEASE_SHA}" -f branch=main -f status=success -f per_page=100)"
-          printf '%s' "${runs}" | jq -e --arg sha "${RELEASE_SHA}" \
-            '.workflow_runs | any(.head_sha == $sha and .head_branch == "main" and .conclusion == "success")'
+          for attempt in {1..90}; do
+            runs="$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/ci-docker.yml/runs?head_sha=${RELEASE_SHA}&branch=main&per_page=100")"
+            conclusion="$(printf '%s' "${runs}" | jq -r --arg sha "${RELEASE_SHA}" \
+              '[.workflow_runs[] | select(.head_sha == $sha and .head_branch == "main" and .event == "push")] | sort_by(.created_at) | last | .conclusion // empty')"
+            if [[ "${conclusion}" == success ]]; then
+              echo "CI passed on ${RELEASE_SHA}"
+              exit 0
+            fi
+            if [[ -n "${conclusion}" ]]; then
+              echo "CI concluded ${conclusion} on ${RELEASE_SHA}; refusing deployment"
+              exit 1
+            fi
+            echo "Waiting for CI on ${RELEASE_SHA} (${attempt}/90)"
+            sleep 20
+          done
+          echo "CI did not complete within 30 minutes; refusing deployment"
+          exit 1
 
       - name: Validate university GitHub connection
         env:
           WIF_PROVIDER: ${{ vars.WIF_PROVIDER }}
           WIF_SERVICE_ACCOUNT: ${{ vars.WIF_SERVICE_ACCOUNT }}
         run: |
+          test "${PROJECT_ID}" = cpe-se-course-2026
+          test "${REGION}" = asia-southeast1
           test -n "${WIF_PROVIDER}" || { echo 'TA must connect this repository to the team WIF provider'; exit 1; }
           test -n "${WIF_SERVICE_ACCOUNT}" || { echo 'TA must provide the team deployer service account'; exit 1; }
           test "${WIF_SERVICE_ACCOUNT}" = "${PREFIX}-deployer@${PROJECT_ID}.iam.gserviceaccount.com"
           [[ "${RELEASE_SHA}" =~ ^[0-9a-f]{40}$ ]]
 
       - name: Authenticate without a service-account key
-        uses: google-github-actions/auth@v2
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
         with:
           workload_identity_provider: ${{ vars.WIF_PROVIDER }}
           service_account: ${{ vars.WIF_SERVICE_ACCOUNT }}
 
       - name: Set up gcloud
-        uses: google-github-actions/setup-gcloud@v2
+        uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3.0.1
 
       - name: Confirm only team resources exist
         run: |
